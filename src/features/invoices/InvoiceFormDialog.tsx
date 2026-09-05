@@ -16,9 +16,10 @@ import { IconBilling } from "@/components/ui/icons";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useMutation } from "@/hooks/useMutation";
 import { errorMessage } from "@/lib/api-client";
+import { config } from "@/lib/config";
 import { CURRENCIES, CURRENCY_LABEL } from "@/lib/currency";
 import { formatMoney, formatQuantity } from "@/lib/format";
-import { invoiceService, purchaseOrderService } from "@/services";
+import { invoiceService, purchaseOrderService, referenceService } from "@/services";
 import type { InvoiceInput } from "@/services/invoice-service";
 import type { PurchaseOrder, PurchaseOrderLine } from "@/types/api";
 
@@ -51,6 +52,12 @@ export function InvoiceFormDialog({
   onCreated: () => void;
 }) {
   const [reference, setReference] = useState("");
+  // Le fournisseur ne part pas dans la requete : le backend le derive du bon
+  // de commande, precisement pour que l'emetteur de la facture ne puisse pas
+  // le choisir. Ici, il ne sert qu'a reduire la liste des commandes — ce qui,
+  // sur cent cinquante bons ouverts, est la difference entre chercher et
+  // trouver.
+  const [supplier, setSupplier] = useState<ResourceOption | null>(null);
   const [purchaseOrder, setPurchaseOrder] = useState<ResourceOption | null>(null);
   const [invoiceDate, setInvoiceDate] = useState(today);
   const [dueDate, setDueDate] = useState(inThirtyDays);
@@ -66,17 +73,34 @@ export function InvoiceFormDialog({
   const action = useCallback((input: InvoiceInput) => invoiceService.submit(input), []);
   const { run, isPending, error, fieldErrors, reset } = useMutation(action);
 
-  const loadPurchaseOrders = useCallback(async (search: string): Promise<ResourceOption[]> => {
-    const page = await purchaseOrderService.list({ search, per_page: 20 });
+  const loadSuppliers = useCallback(async (search: string): Promise<ResourceOption[]> => {
+    const page = await referenceService.listSuppliers({ search, per_page: 20, is_active: true });
 
-    return page.data
-      .filter((order) => OPEN_STATUSES.includes(order.status))
-      .map((order) => ({
-        value: order.id,
-        label: order.reference,
-        hint: [order.supplier?.name, order.project?.name].filter(Boolean).join(" · "),
-      }));
+    return page.data.map((item) => ({
+      value: item.id,
+      label: item.name,
+      hint: item.code,
+    }));
   }, []);
+
+  const loadPurchaseOrders = useCallback(
+    async (search: string): Promise<ResourceOption[]> => {
+      const page = await purchaseOrderService.list({
+        search,
+        per_page: 20,
+        supplier_id: supplier?.value,
+      });
+
+      return page.data
+        .filter((order) => OPEN_STATUSES.includes(order.status))
+        .map((order) => ({
+          value: order.id,
+          label: order.reference,
+          hint: [order.supplier?.name, order.project?.name].filter(Boolean).join(" · "),
+        }));
+    },
+    [supplier],
+  );
 
   const loadOrder = useCallback(
     (): Promise<PurchaseOrder | null> =>
@@ -107,6 +131,14 @@ export function InvoiceFormDialog({
     setCurrencyOverride(null);
   }
 
+  // Changer de fournisseur invalide le bon de commande deja choisi : le
+  // conserver ferait saisir une facture rattachee a un autre fournisseur que
+  // celui affiche, ce que le backend refuserait a la soumission.
+  function selectSupplier(option: ResourceOption | null) {
+    setSupplier(option);
+    selectPurchaseOrder(null);
+  }
+
   function toggleLine(line: PurchaseOrderLine, include: boolean) {
     setExcluded((current) => {
       const next = { ...current };
@@ -119,7 +151,7 @@ export function InvoiceFormDialog({
 
   function handleClose() {
     setReference("");
-    selectPurchaseOrder(null);
+    selectSupplier(null);
     setInvoiceDate(today());
     setDueDate(inThirtyDays());
     reset();
@@ -193,6 +225,17 @@ export function InvoiceFormDialog({
           />
 
           <ResourceSelect
+            label="Fournisseur"
+            required
+            placeholder="Rechercher un fournisseur…"
+            selected={supplier}
+            onChange={selectSupplier}
+            loadOptions={loadSuppliers}
+            hint="Réduit la liste des bons de commande. Le fournisseur retenu reste celui du bon."
+            emptyLabel="Aucun fournisseur actif ne correspond"
+          />
+
+          <ResourceSelect
             label="Bon de commande"
             required
             placeholder="Rechercher une référence de commande…"
@@ -200,7 +243,11 @@ export function InvoiceFormDialog({
             onChange={selectPurchaseOrder}
             loadOptions={loadPurchaseOrders}
             errors={fieldErrors.purchase_order_id}
-            emptyLabel="Aucun bon de commande ouvert ne correspond"
+            emptyLabel={
+              supplier === null
+                ? "Aucun bon de commande ouvert ne correspond"
+                : `Aucun bon de commande ouvert pour ${supplier.label}`
+            }
           />
 
           <TextField
@@ -226,7 +273,7 @@ export function InvoiceFormDialog({
             label="Devise de facturation"
             value={currency}
             errors={fieldErrors.currency}
-            hint="Si elle diffère de celle du bon de commande, le moteur convertit au taux du jour de la facture."
+            hint="Devise du règlement. Si elle diffère de celle du bon de commande, le moteur convertit au taux en vigueur à la date de la facture."
             onChange={(event) => setCurrencyOverride(event.target.value)}
           >
             {CURRENCIES.map((code) => (
