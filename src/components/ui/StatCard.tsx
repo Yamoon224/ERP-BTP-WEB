@@ -38,7 +38,7 @@ export function StatCard({
           <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {label}
           </p>
-          <p className={cn("mt-2 text-2xl font-semibold tabular-nums", TONE_ACCENT[tone])}>
+          <p className={cn("mt-2 text-md font-semibold tabular-nums", TONE_ACCENT[tone])}>
             {value}
           </p>
           {hint ? (
