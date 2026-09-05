@@ -1,5 +1,12 @@
-import { apiFetch } from "@/lib/api-client";
-import type { Invoice, InvoiceStatus, Paginated, PaymentAuthorization, Single } from "@/types/api";
+import { apiDownload, apiFetch } from "@/lib/api-client";
+import type {
+  Currency,
+  Invoice,
+  InvoiceStatus,
+  Paginated,
+  PaymentAuthorization,
+  Single,
+} from "@/types/api";
 
 export interface InvoiceListParams {
   sort?: string;
@@ -8,6 +15,7 @@ export interface InvoiceListParams {
   supplier_id?: number;
   purchase_order_id?: number;
   status?: InvoiceStatus;
+  currency?: Currency;
   page?: number;
   per_page?: number;
 }
@@ -57,6 +65,30 @@ export async function cancel(id: number): Promise<Invoice> {
   const response = await apiFetch<Single<Invoice>>(`/invoices/${id}/cancel`, { method: "POST" });
 
   return response.data;
+}
+
+/**
+ * Change la devise de reglement, ce qui **rejoue le rapprochement**.
+ *
+ * Les montants des lignes ne sont pas convertis : corriger la devise corrige
+ * la facon dont la facture a ete lue, pas ce que le fournisseur a ecrit
+ * dessus. La reponse porte deja le nouveau verdict.
+ */
+export async function changeCurrency(id: number, currency: Currency): Promise<Invoice> {
+  const response = await apiFetch<Single<Invoice>>(`/invoices/${id}/currency`, {
+    method: "PATCH",
+    body: { currency },
+  });
+
+  return response.data;
+}
+
+/**
+ * Telecharge la facture au format PDF, verdict de rapprochement compris — une
+ * facture imprimee sans son controle ne dit pas si elle est payable.
+ */
+export function downloadPdf(id: number, reference: string): Promise<void> {
+  return apiDownload(`/invoices/${id}/pdf`, `facture-${reference}.pdf`);
 }
 
 export async function paymentAuthorization(id: number): Promise<PaymentAuthorization | null> {

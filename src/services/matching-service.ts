@@ -1,9 +1,12 @@
 import { apiFetch } from "@/lib/api-client";
 import type {
+  ActorType,
   DiscrepancySeverity,
   DiscrepancyType,
   MatchException,
   MatchRun,
+  MatchStatus,
+  MatchTrigger,
   Paginated,
   ReviewStatus,
   Single,
@@ -12,6 +15,20 @@ import type {
 export interface MatchRunListParams {
   page?: number;
   per_page?: number;
+}
+
+/** Filtres du registre global, toutes factures confondues. */
+export interface MatchRunRegistryParams {
+  search?: string;
+  invoice_id?: number;
+  supplier_id?: number;
+  status?: MatchStatus;
+  trigger?: MatchTrigger;
+  actor_type?: ActorType;
+  page?: number;
+  per_page?: number;
+  sort?: string;
+  direction?: "asc" | "desc";
 }
 
 export interface ExceptionListParams {
@@ -54,6 +71,26 @@ export async function runMatching(invoiceId: number): Promise<MatchRun> {
   const response = await apiFetch<Single<MatchRun>>(`/invoices/${invoiceId}/match-runs`, {
     method: "POST",
   });
+
+  return response.data;
+}
+
+/**
+ * Registre global des executions.
+ *
+ * Il n'existe volontairement ni modification ni suppression : une execution
+ * archive une decision et sa preuve. La corriger revient a la **rejouer**
+ * (`runMatching`), ce qui produit une nouvelle execution sans effacer la
+ * precedente.
+ */
+export function listAllRuns(
+  params: MatchRunRegistryParams = {},
+): Promise<Paginated<MatchRun>> {
+  return apiFetch<Paginated<MatchRun>>("/match-runs", { query: { ...params } });
+}
+
+export async function findRunById(id: number): Promise<MatchRun> {
+  const response = await apiFetch<Single<MatchRun>>(`/match-runs/${id}`);
 
   return response.data;
 }

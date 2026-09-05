@@ -26,6 +26,37 @@ const SIZE_CLASSES: Record<Size, string> = {
   icon: "h-8 w-8",
 };
 
+/**
+ * Habillage partage par le bouton et par le lien qui doit lui ressembler.
+ *
+ * Un lien de navigation ne doit pas etre un `<button>` avec un `onClick` qui
+ * change `location` : le clic milieu, l'ouverture dans un onglet et le survol
+ * d'URL disparaitraient. `LinkButton` reutilise donc ces classes plutot que de
+ * les recopier — sans quoi les deux finiraient par diverger d'un pixel.
+ */
+export function buttonClasses({
+  variant = "primary",
+  size = "md",
+  className,
+}: {
+  variant?: Variant;
+  size?: Size;
+  className?: string;
+} = {}): string {
+  return cn(
+    "inline-flex items-center justify-center rounded-sm font-medium whitespace-nowrap",
+    "transition-all duration-150",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
+    "disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none disabled:active:translate-y-0",
+    VARIANT_CLASSES[variant],
+    SIZE_CLASSES[size],
+    className,
+  );
+}
+
+export type ButtonVariant = Variant;
+export type ButtonSize = Size;
+
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: Size;
@@ -45,15 +76,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       // rapprochements, un double clic creerait deux executions.
       disabled={disabled || isLoading}
       aria-busy={isLoading}
-      className={cn(
-        "inline-flex items-center justify-center rounded-sm font-medium whitespace-nowrap",
-        "transition-all duration-150",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
-        "disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none disabled:active:translate-y-0",
-        VARIANT_CLASSES[variant],
-        SIZE_CLASSES[size],
-        className,
-      )}
+      className={buttonClasses({ variant, size, className })}
       {...props}
     >
       {isLoading ? <Spinner /> : icon}

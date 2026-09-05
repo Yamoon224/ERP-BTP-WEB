@@ -143,3 +143,56 @@ export function errorMessage(error: unknown, fallback = "Une erreur est survenue
   if (error instanceof Error && error.message) return error.message;
   return fallback;
 }
+
+/**
+ * Telecharge un fichier servi par l'API.
+ *
+ * Un `<a href>` ne conviendrait pas : le token d'authentification voyage dans
+ * un en-tete, pas dans l'URL, et un lien nu recevrait un 401. On recupere donc
+ * le flux, puis on declenche l'enregistrement depuis un URL objet local.
+ *
+ * Le nom de fichier propose par le serveur (`Content-Disposition`) est
+ * privilegie : c'est lui qui porte la reference du document, et un
+ * « telechargement.pdf » dans un dossier de comptabilite ne se retrouve pas.
+ */
+export async function apiDownload(path: string, fallbackFilename: string): Promise<void> {
+  const requestHeaders = new Headers({ Accept: "application/pdf" });
+  const token = readToken();
+  if (token) requestHeaders.set("Authorization", `Bearer ${token}`);
+
+  let response: Response;
+  try {
+    response = await fetch(buildUrl(path), { headers: requestHeaders });
+  } catch (cause) {
+    throw new NetworkError(cause);
+  }
+
+  if (!response.ok) {
+    const errorBody = (await response.json().catch(() => null)) as ApiErrorBody | null;
+    throw new ApiError(response.status, errorBody);
+  }
+
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filenameFrom(response.headers.get("Content-Disposition")) ?? fallbackFilename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  // Liberer l'URL objet : sans cela le blob reste en memoire tant que l'onglet
+  // est ouvert, ce qui se voit vite sur un ecran ou l'on exporte en serie.
+  URL.revokeObjectURL(objectUrl);
+}
+
+function filenameFrom(disposition: string | null): string | null {
+  if (!disposition) return null;
+
+  const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(disposition);
+  if (utf8) return decodeURIComponent(utf8[1]);
+
+  const plain = /filename="?([^";]+)"?/i.exec(disposition);
+  return plain ? plain[1] : null;
+}

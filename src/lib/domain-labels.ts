@@ -132,6 +132,7 @@ export const MATCH_TRIGGER_LABEL: Record<MatchTrigger, string> = {
   manual: "Relance manuelle",
   delivery_accepted: "Acceptation d'une livraison",
   exception_reviewed: "Arbitrage d'un écart",
+  currency_changed: "Changement de devise de règlement",
 };
 
 export const ROLE_LABEL: Record<string, string> = {

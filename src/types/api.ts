@@ -267,7 +267,10 @@ export type MatchTrigger =
   | "invoice_submitted"
   | "manual"
   | "delivery_accepted"
-  | "exception_reviewed";
+  | "exception_reviewed"
+  /** La devise de règlement a changé : les prix ne se comparent plus dans la
+   *  même unité, le montant autorisé est donc recalculé. */
+  | "currency_changed";
 
 export interface MatchRun {
   id: number;
@@ -294,6 +297,14 @@ export interface MatchRun {
   base_matched_amount: number;
   base_unmatched_amount: number;
   exception_count: number;
+  /** Contexte facture, servi par le registre global des rapprochements. */
+  invoice?: {
+    id: number;
+    reference: string;
+    status: InvoiceStatus;
+    currency: Currency;
+    supplier: { id: number; name: string } | null;
+  };
   line_results?: MatchLineResult[];
   exceptions?: MatchException[];
   line_results_count?: number;
@@ -420,4 +431,71 @@ export interface DashboardSummary {
     /** Ventilation par devise de règlement effective. */
     by_currency: Array<{ currency: Currency; amount: number; base_amount: number }>;
   };
+}
+
+// --- Référentiel des devises ------------------------------------------------
+
+/**
+ * Une cotation stockée, par opposition à `ExchangeRate` qui est le taux
+ * *appliqué* et archivé avec une décision. Les deux se ressemblent et ne jouent
+ * pas le même rôle : celui-ci s'administre, l'autre s'audite.
+ */
+export interface ExchangeRateQuote {
+  id: number;
+  base_currency: Currency;
+  quote_currency: Currency;
+  /** Multiplicateur : montant_en_quote = montant_en_base × rate. */
+  rate: number;
+  source: ExchangeRateSource;
+  source_label: string;
+  /** Faux pour une parité fixe réglementaire : l'interface désactive alors ses commandes. */
+  is_editable: boolean;
+  effective_from: string;
+  created_at: string | null;
+}
+
+export interface CurrencyDefinition {
+  code: Currency;
+  label: string;
+  symbol: string;
+  /** Décimales réelles de la devise. Zéro pour le franc CFA. */
+  decimals: number;
+}
+
+export interface ExchangeRateSourceDefinition {
+  value: ExchangeRateSource;
+  label: string;
+  expires: boolean;
+}
+
+export interface CurrencyReference {
+  currencies: CurrencyDefinition[];
+  sources: ExchangeRateSourceDefinition[];
+  default_currency: Currency;
+  base_currency: Currency;
+}
+
+// --- Journal d'audit --------------------------------------------------------
+
+export interface AuditLog {
+  id: number;
+  log_name: string | null;
+  description: string;
+  event: string | null;
+  event_label: string;
+  subject_type: string | null;
+  /** Libellé métier du type d'objet — « Facture » plutôt que `App\Models\Invoice`. */
+  subject_label: string;
+  subject_id: number | null;
+  causer: { id: number; name: string } | null;
+  /** Nom de l'auteur, ou « Systeme » quand la décision vient du moteur. */
+  causer_label: string;
+  /** État avant (`old`) et après (`attributes`) le changement. */
+  properties: { attributes?: Record<string, unknown>; old?: Record<string, unknown> };
+  created_at: string | null;
+}
+
+export interface AuditFacets {
+  subject_types: string[];
+  events: string[];
 }

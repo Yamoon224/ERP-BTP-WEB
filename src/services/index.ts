@@ -16,3 +16,5 @@ export * as referenceService from "./reference-service";
 export * as paymentService from "./payment-service";
 export * as dashboardService from "./dashboard-service";
 export * as userService from "./user-service";
+export * as currencyService from "./currency-service";
+export * as auditService from "./audit-service";
