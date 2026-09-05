@@ -252,12 +252,12 @@ export function ProjectList() {
             />
           ) : null}
 
+          {/* Deux cartes par ligne, et pas trois : la colonne d'une grille a
+              trois etait trop etroite pour que « Détail / Modifier / Supprimer »
+              tiennent sur une meme ligne. Une seule colonne sous `md`, ou deux
+              cartes cote a cote ne laisseraient plus la place a ces memes
+              actions. */}
           {!isLoading && !error && items.length > 0 ? (
-            {/* Deux cartes par ligne, et pas trois : la colonne d'une grille a
-                trois etait trop etroite pour que « Détail / Modifier /
-                Supprimer » tiennent sur une meme ligne. Une seule colonne sous
-                `md`, ou deux cartes cote a cote ne laisseraient plus la place
-                aux memes actions. */}
             <ul className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2">
               {items.map((project) => (
                 <ProjectCard

@@ -1,5 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ApiError, NetworkError, apiFetch, clearToken, errorMessage, storeToken } from "./api-client";
+import {
+  ApiError,
+  NetworkError,
+  apiFetch,
+  clearToken,
+  errorMessage,
+  onUnauthenticated,
+  storeToken,
+} from "./api-client";
 import { config } from "./config";
 import { mockApi, testId } from "@/test/api-mock";
 
@@ -102,6 +110,42 @@ describe("apiFetch", () => {
       expect(unauthenticated.isForbidden).toBe(false);
       expect(forbidden.isForbidden).toBe(true);
       expect(forbidden.isUnauthenticated).toBe(false);
+    });
+
+    it("efface le token expiré et signale la fin de session", async () => {
+      storeToken("token-expire");
+      const notify = vi.fn();
+      const unsubscribe = onUnauthenticated(notify);
+
+      mockApi().on("GET /invoices", {
+        status: 401,
+        body: { message: "Non authentifié.", error_code: "unauthenticated" },
+      });
+
+      await apiFetch("/invoices").catch(() => null);
+
+      expect(window.localStorage.getItem(config.tokenStorageKey)).toBeNull();
+      expect(notify).toHaveBeenCalledTimes(1);
+
+      unsubscribe();
+    });
+
+    it("ne signale rien quand le 401 vient d'une requête sans token", async () => {
+      const notify = vi.fn();
+      const unsubscribe = onUnauthenticated(notify);
+
+      mockApi().on("GET /me", {
+        status: 401,
+        body: { message: "Non authentifié.", error_code: "unauthenticated" },
+      });
+
+      await apiFetch("/me").catch(() => null);
+
+      // Une visite anonyme n'est pas une session expirée : afficher « votre
+      // session a expiré » a quelqu'un qui n'en a jamais ouvert serait faux.
+      expect(notify).not.toHaveBeenCalled();
+
+      unsubscribe();
     });
 
     it("distingue un serveur injoignable d'une réponse en erreur", async () => {
