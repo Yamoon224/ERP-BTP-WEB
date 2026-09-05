@@ -154,165 +154,174 @@ body {
   --field-disabled-bg: #1e293b;
 }
 
-/* Reserve la hauteur du libelle monte : sans cela il serait rogne par le
-   conteneur des que le champ est le premier element d'une carte. */
-.field-shell {
-  position: relative;
-  display: block;
-  margin-top: 0.4rem;
-}
-
-.field-control {
-  display: block;
-  width: 100%;
-  border: 0;
-  border-radius: 2px;
-  background-color: transparent;
-  padding: 0.7rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.35rem;
-  color: var(--foreground);
-  outline: none;
-}
-
-.field-control::placeholder {
-  color: transparent;
-  transition: color 0.12s ease-out;
-}
-
-/* Le placeholder n'apparait qu'une fois le libelle monte : les deux textes ne
-   se superposent jamais, et le format attendu s'affiche pile au moment ou
-   l'on s'apprete a taper. */
-.field-control:focus::placeholder {
-  color: var(--field-placeholder);
-}
-
-.field-control:disabled {
-  cursor: not-allowed;
-  background-color: var(--field-disabled-bg);
-  color: color-mix(in srgb, var(--foreground) 55%, transparent);
-}
-
-.field-control[type="search"]::-webkit-search-cancel-button {
-  cursor: pointer;
-}
-
-/* --- Contour ------------------------------------------------------------- */
-
-.field-outline {
-  position: absolute;
-  inset: -0.4rem 0 0 0;
-  margin: 0;
-  padding: 0 0.5rem;
-  min-width: 0;
-  pointer-events: none;
-  border: 1px solid var(--field-border);
-  border-radius: 2px;
-  transition:
-    border-color 0.15s ease-out,
-    box-shadow 0.15s ease-out;
-}
-
-.field-outline > legend {
-  display: block;
-  float: none;
-  width: auto;
-  max-width: 0.01px;
-  height: 0.8rem;
-  padding: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  visibility: hidden;
-  font-size: 0.6875rem;
-  transition: max-width 0.12s ease-out;
-}
-
-.field-outline > legend > span {
-  display: inline-block;
-  padding: 0 0.3rem;
-  opacity: 0;
-  visibility: visible;
-}
-
-.field-shell:hover .field-outline {
-  border-color: var(--field-border-hover);
-}
-
-/* --- Libelle ------------------------------------------------------------- */
-
-.field-label {
-  position: absolute;
-  left: 0.8rem;
-  top: 50%;
-  z-index: 1;
-  max-width: calc(100% - 1.6rem);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transform: translateY(-50%);
-  transform-origin: left center;
-  pointer-events: none;
-  font-size: 0.875rem;
-  line-height: 1;
-  color: var(--field-label);
-  transition:
-    top 0.12s ease-out,
-    font-size 0.12s ease-out,
-    color 0.12s ease-out;
-}
-
-/* Le libelle d'un textarea ne se centre pas verticalement : sur quatre lignes
-   de saisie il flotterait au milieu du vide. */
-.field-shell--textarea .field-label {
-  top: 1.42rem;
-}
-
-/* --- Etat monte ----------------------------------------------------------
- *
- * Declenche par le focus OU par la presence d'une valeur. Les <select> et les
- * champs de date ne connaissent pas `:placeholder-shown` : `:not()` les rend
- * donc flottants en permanence, ce qui est exactement le comportement voulu —
- * ils affichent toujours quelque chose.
+/*
+ * Habillage du champ. Place dans la couche `components` a dessein : une regle
+ * hors couche l'emporterait sur TOUTES les utilitaires Tailwind, y compris le
+ * `pr-9` qui degage la place du chevron d'un select ou le `pl-9` de la loupe
+ * d'une recherche. Ici, l'utilitaire garde le dernier mot, comme partout
+ * ailleurs dans l'interface.
  */
+@layer components {
+  /* Reserve la hauteur du libelle monte : sans cela il serait rogne par le
+     conteneur des que le champ est le premier element d'une carte. */
+  .field-shell {
+    position: relative;
+    display: block;
+    margin-top: 0.4rem;
+  }
 
-.field-control:focus ~ .field-outline > legend,
-.field-control:not(:placeholder-shown) ~ .field-outline > legend {
-  max-width: 100%;
-}
+  .field-control {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 2px;
+    background-color: transparent;
+    padding: 0.7rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.35rem;
+    color: var(--foreground);
+    outline: none;
+  }
 
-.field-control:focus ~ .field-label,
-.field-control:not(:placeholder-shown) ~ .field-label {
-  top: -0.4rem;
-  font-size: 0.6875rem;
-  font-weight: 500;
-}
+  .field-control::placeholder {
+    color: transparent;
+    transition: color 0.12s ease-out;
+  }
 
-.field-control:focus ~ .field-label {
-  color: var(--field-label-focus);
-}
+  /* Le placeholder n'apparait qu'une fois le libelle monte : les deux textes ne
+     se superposent jamais, et le format attendu s'affiche pile au moment ou
+     l'on s'apprete a taper. */
+  .field-control:focus::placeholder {
+    color: var(--field-placeholder);
+  }
 
-.field-control:focus ~ .field-outline {
-  border-color: var(--field-border-focus);
-  box-shadow: inset 0 0 0 1px var(--field-border-focus);
-}
+  .field-control:disabled {
+    cursor: not-allowed;
+    background-color: var(--field-disabled-bg);
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  }
 
-/* --- Erreur et desactivation --------------------------------------------- */
+  .field-control[type="search"]::-webkit-search-cancel-button {
+    cursor: pointer;
+  }
 
-.field-control[aria-invalid="true"] ~ .field-outline {
-  border-color: var(--field-border-error);
-}
+  /* --- Contour ------------------------------------------------------------- */
 
-.field-control[aria-invalid="true"]:focus ~ .field-outline {
-  box-shadow: inset 0 0 0 1px var(--field-border-error);
-}
+  .field-outline {
+    position: absolute;
+    inset: -0.4rem 0 0 0;
+    margin: 0;
+    padding: 0 0.5rem;
+    min-width: 0;
+    pointer-events: none;
+    border: 1px solid var(--field-border);
+    border-radius: 2px;
+    transition:
+      border-color 0.15s ease-out,
+      box-shadow 0.15s ease-out;
+  }
 
-.field-control[aria-invalid="true"] ~ .field-label,
-.field-control[aria-invalid="true"]:focus ~ .field-label {
-  color: var(--field-border-error);
-}
+  .field-outline > legend {
+    display: block;
+    float: none;
+    width: auto;
+    max-width: 0.01px;
+    height: 0.8rem;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    visibility: hidden;
+    font-size: 0.6875rem;
+    transition: max-width 0.12s ease-out;
+  }
 
-.field-control:disabled ~ .field-outline {
-  border-color: color-mix(in srgb, var(--field-border) 55%, transparent);
+  .field-outline > legend > span {
+    display: inline-block;
+    padding: 0 0.3rem;
+    opacity: 0;
+    visibility: visible;
+  }
+
+  .field-shell:hover .field-outline {
+    border-color: var(--field-border-hover);
+  }
+
+  /* --- Libelle ------------------------------------------------------------- */
+
+  .field-label {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    z-index: 1;
+    max-width: calc(100% - 1.6rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transform: translateY(-50%);
+    transform-origin: left center;
+    pointer-events: none;
+    font-size: 0.875rem;
+    line-height: 1;
+    color: var(--field-label);
+    transition:
+      top 0.12s ease-out,
+      font-size 0.12s ease-out,
+      color 0.12s ease-out;
+  }
+
+  /* Le libelle d'un textarea ne se centre pas verticalement : sur quatre lignes
+     de saisie il flotterait au milieu du vide. */
+  .field-shell--textarea .field-label {
+    top: 1.42rem;
+  }
+
+  /* --- Etat monte ----------------------------------------------------------
+   *
+   * Declenche par le focus OU par la presence d'une valeur. Les <select> et les
+   * champs de date ne connaissent pas `:placeholder-shown` : `:not()` les rend
+   * donc flottants en permanence, ce qui est exactement le comportement voulu —
+   * ils affichent toujours quelque chose.
+   */
+
+  .field-control:focus ~ .field-outline > legend,
+  .field-control:not(:placeholder-shown) ~ .field-outline > legend {
+    max-width: 100%;
+  }
+
+  .field-control:focus ~ .field-label,
+  .field-control:not(:placeholder-shown) ~ .field-label {
+    top: -0.4rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
+
+  .field-control:focus ~ .field-label {
+    color: var(--field-label-focus);
+  }
+
+  .field-control:focus ~ .field-outline {
+    border-color: var(--field-border-focus);
+    box-shadow: inset 0 0 0 1px var(--field-border-focus);
+  }
+
+  /* --- Erreur et desactivation --------------------------------------------- */
+
+  .field-control[aria-invalid="true"] ~ .field-outline {
+    border-color: var(--field-border-error);
+  }
+
+  .field-control[aria-invalid="true"]:focus ~ .field-outline {
+    box-shadow: inset 0 0 0 1px var(--field-border-error);
+  }
+
+  .field-control[aria-invalid="true"] ~ .field-label,
+  .field-control[aria-invalid="true"]:focus ~ .field-label {
+    color: var(--field-border-error);
+  }
+
+  .field-control:disabled ~ .field-outline {
+    border-color: color-mix(in srgb, var(--field-border) 55%, transparent);
+  }
 }
 
 /* Impression : les factures s'exportent en PDF cote serveur, mais un ecran de

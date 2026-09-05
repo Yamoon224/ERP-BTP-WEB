@@ -45,29 +45,38 @@ describe("Champs de formulaire", () => {
     expect(input).toHaveAttribute("type", "password");
   });
 
-  it("ne dessine qu'une seule bordure autour du contrôle", () => {
-    render(<TextField label="Référence" placeholder="PO-2026-0001" />);
+  it("ne dessine qu'une seule bordure, portee par le contour et non par le controle", () => {
+    const { container } = render(<TextField label="Référence" placeholder="PO-2026-0001" />);
 
     const input = screen.getByLabelText("Référence");
 
-    // Une seule ligne de contour, et elle est interieure. Un libelle flottant
-    // pose sur la bordure haute devrait la masquer derriere un fond opaque ;
-    // des que ce fond ne coincide pas avec celui du conteneur, le trait
-    // reapparait et le champ semble en porter deux.
-    expect(input.className).toContain("ring-1");
-    expect(input.className).toContain("ring-inset");
-    expect(input.className).toContain("border-0");
+    // Le contour est dessine par un <fieldset> pose par-dessus le controle, et
+    // sa <legend> decoupe un vrai trou dans le trait quand le libelle monte.
+    // Le controle lui-meme ne porte donc AUCUNE bordure : c'est ce qui rend le
+    // « double trait » impossible, quel que soit le fond du conteneur.
+    expect(input).toHaveClass("field-control");
+    expect(input.className).not.toContain("ring-1");
+    expect(input.className).not.toContain("border");
+
+    const outlines = container.querySelectorAll("fieldset.field-outline");
+    expect(outlines).toHaveLength(1);
+    // La legende reprend le libelle : c'est elle qui dimensionne l'encoche.
+    expect(outlines[0].querySelector("legend")).toHaveTextContent("Référence");
   });
 
-  it("garde le placeholder visible à côté du libellé", () => {
-    render(<TextField label="Quantité" placeholder="400" />);
+  it("fait flotter le libelle au-dessus du controle", () => {
+    const { container } = render(<TextField label="Quantité" placeholder="400" />);
 
     const input = screen.getByLabelText("Quantité");
+    const label = container.querySelector("label.field-label");
 
-    // Le libelle dit ce qu'on attend, le placeholder sous quelle forme : les
-    // deux doivent rester lisibles en meme temps.
-    expect(input.className).toContain("placeholder:text-slate-400");
-    expect(input.className).not.toContain("placeholder:text-transparent");
+    // Le libelle est pose dans le champ tant qu'il est vide, et monte sur la
+    // bordure des la saisie ou le focus. Le placeholder reste declare : c'est
+    // lui qui alimente `:placeholder-shown`, la pseudo-classe qui declenche la
+    // montee. Sans lui, le libelle resterait au centre d'un champ rempli.
+    expect(label).toHaveTextContent("Quantité");
+    expect(input).toHaveAttribute("placeholder", "400");
+    expect(input).toHaveClass("field-control");
   });
 
   it("rend un select accessible par son libellé", async () => {

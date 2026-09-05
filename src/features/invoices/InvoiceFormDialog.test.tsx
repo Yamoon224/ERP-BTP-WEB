@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { InvoiceFormDialog } from "./InvoiceFormDialog";
 import { mockApi, paginated } from "@/test/api-mock";
+import { normaliseSpaces } from "@/test/intl";
 import type { PurchaseOrder } from "@/types/api";
 
 const ORDER: PurchaseOrder = {
@@ -58,6 +59,7 @@ const CLOSED_ORDER: PurchaseOrder = {
 
 function mockOrders() {
   return mockApi()
+    .on("GET /suppliers", { body: paginated([ORDER.supplier!]) })
     .on("GET /purchase-orders", { body: paginated([ORDER, CLOSED_ORDER]) })
     .on("GET /purchase-orders/4", { body: { data: ORDER } });
 }
@@ -89,8 +91,13 @@ describe("InvoiceFormDialog", () => {
 
     expect(await screen.findByLabelText(/Quantité facturée pour CIM-42/)).toHaveValue(400);
     expect(screen.getByLabelText(/Prix unitaire facturé pour CIM-42/)).toHaveValue(8.9);
-    // 400 × 8,90 + 60 × 24,50 = 5 030
-    expect(screen.getByText("5 030,00 €")).toBeInTheDocument();
+    // 400 x 8,90 + 60 x 24,50 = 5 030. Le total s'affiche dans la devise de
+    // reglement — le franc CFA — et non dans celle du bon de commande : c'est
+    // dans cette unite que le virement partira. Le CFA n'ayant pas de
+    // sous-unite, aucun centime n'est affiche.
+    expect(
+      screen.getByText((content) => normaliseSpaces(content) === "5 030 F CFA"),
+    ).toBeInTheDocument();
   });
 
   it("soumet les lignes retenues, écarts compris", async () => {
@@ -120,7 +127,8 @@ describe("InvoiceFormDialog", () => {
       const posted = api.calls.find((call) => call.method === "POST" && call.path === "/invoices");
       expect(posted).toBeDefined();
       const body = posted?.body as { lines: Array<Record<string, unknown>>; currency: string };
-      expect(body.currency).toBe("EUR");
+      // La facture nait en devise de reglement, pas dans celle du contrat.
+      expect(body.currency).toBe("XOF");
       expect(body.lines).toEqual([
         {
           purchase_order_line_id: 40,
