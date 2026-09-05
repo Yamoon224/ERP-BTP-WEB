@@ -45,7 +45,7 @@ export default function LoginPage() {
             Contrôle des règlements fournisseurs
           </p>
           <h2 className="mt-3 text-4xl font-semibold leading-tight tracking-tight text-white">
-            Aucun euro ne part sans ses trois preuves.
+            Aucun Fcfa ne part sans ses trois preuves.
           </h2>
           <span aria-hidden="true" className="mt-5 block h-[3px] w-20 rounded-full bg-blue-300" />
 
