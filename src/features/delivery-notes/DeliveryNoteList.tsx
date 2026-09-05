@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Badge, Button, DataTable, FormAlert, SelectField } from "@/components/ui";
 import type { Column } from "@/components/ui";
@@ -76,7 +77,12 @@ export function DeliveryNoteList() {
       sortKey: "reference",
       cell: (note) => (
         <div>
-          <p className="font-medium text-slate-900 dark:text-slate-100">{note.reference}</p>
+          <Link
+            href={`/delivery-notes/${note.id}`}
+            className="font-medium text-blue-700 hover:underline dark:text-blue-400"
+          >
+            {note.reference}
+          </Link>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {note.purchase_order?.reference ?? `PO #${note.purchase_order_id}`}
           </p>

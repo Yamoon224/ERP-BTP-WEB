@@ -37,10 +37,11 @@ const OPEN_STATUSES = ["open", "partially_received", "fully_received"];
  * etape qu'on penserait a lancer plus tard. Le formulaire l'annonce, parce que
  * la facture peut ressortir en litige dans la seconde qui suit.
  *
- * Ni le fournisseur ni le total ne sont saisissables : le premier vient du bon
- * de commande — c'est ce qui garantit que la comparaison porte sur une donnee
- * que l'emetteur de la facture ne choisit pas — et le second est recalcule
- * depuis les lignes.
+ * Le fournisseur se choisit, mais il n'est **pas** envoye : il ne sert qu'a
+ * reduire la liste des bons de commande. Celui que retiendra la facture est
+ * toujours celui du bon — c'est ce qui garantit que la comparaison porte sur
+ * une donnee que l'emetteur de la facture ne choisit pas. Le total, lui, est
+ * recalcule depuis les lignes.
  */
 export function InvoiceFormDialog({
   isOpen,
@@ -114,9 +115,11 @@ export function InvoiceFormDialog({
 
   const orderLines: PurchaseOrderLine[] = purchaseOrder === null ? [] : (order?.lines ?? []);
 
-  // La facture reprend par defaut la devise du bon de commande, jusqu'a ce que
-  // l'utilisateur en choisisse une autre — un fournisseur facture dans la sienne.
-  const currency = currencyOverride ?? order?.currency ?? "EUR";
+  // La facture nait dans la devise de reglement de l'entreprise, et non dans
+  // celle du bon de commande : c'est en francs CFA que le virement partira. Un
+  // contrat en euros reste possible — le moteur convertit alors pour comparer
+  // les prix — mais il ne dicte pas la devise de la creance.
+  const currency = currencyOverride ?? config.defaultCurrency;
 
   const quantityOf = (line: PurchaseOrderLine) =>
     quantities[line.id] ?? String(line.quantity_ordered);

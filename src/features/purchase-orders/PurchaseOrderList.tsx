@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState } from "react";
-import { Badge, Button, DataTable, SelectField } from "@/components/ui";
+import { Badge, Button, DataTable, LinkButton, SelectField } from "@/components/ui";
 import type { Column } from "@/components/ui";
-import { IconPlus } from "@/components/ui/icons";
+import { IconExternal, IconPlus } from "@/components/ui/icons";
 import { useAuth } from "@/features/auth/AuthContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { usePaginatedData } from "@/hooks/usePaginatedData";
@@ -56,7 +57,12 @@ export function PurchaseOrderList({ initialSearch = "" }: { initialSearch?: stri
       header: "Référence",
       sortKey: "reference",
       cell: (order) => (
-        <span className="font-medium text-slate-900 dark:text-slate-100">{order.reference}</span>
+        <Link
+          href={`/purchase-orders/${order.id}`}
+          className="font-medium text-blue-700 hover:underline dark:text-blue-400"
+        >
+          {order.reference}
+        </Link>
       ),
     },
     {
@@ -113,6 +119,21 @@ export function PurchaseOrderList({ initialSearch = "" }: { initialSearch?: stri
       sortKey: "status",
       cell: (order) => (
         <Badge tone={PURCHASE_ORDER_STATUS_TONE[order.status]}>{order.status_label}</Badge>
+      ),
+    },
+    {
+      key: "actions",
+      header: <span className="sr-only">Actions</span>,
+      className: "text-right",
+      headerClassName: "text-right",
+      cell: (order) => (
+        <LinkButton
+          size="sm"
+          href={`/purchase-orders/${order.id}`}
+          icon={<IconExternal className="h-3.5 w-3.5" />}
+        >
+          Détail
+        </LinkButton>
       ),
     },
   ];

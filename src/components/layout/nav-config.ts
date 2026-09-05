@@ -1,11 +1,13 @@
 import type { ComponentType } from "react";
 import {
+  IconBanknote,
   IconDashboard,
   IconDelivery,
   IconException,
   IconBilling,
   IconPayment,
   IconPurchaseOrder,
+  IconShield,
   IconUsers,
 } from "@/components/ui/icons";
 import type { IconProps } from "@/components/ui/icons";
@@ -35,6 +37,20 @@ export const NAV_ITEMS: NavItem[] = [
     icon: IconDashboard,
   },
   {
+    href: "/suppliers",
+    label: "Fournisseurs",
+    permission: "procurement.view",
+    description: "Qui nous facture — le referentiel d'ou part le circuit",
+    icon: IconUsers,
+  },
+  {
+    href: "/projects",
+    label: "Chantiers",
+    permission: "procurement.view",
+    description: "Les affaires sur lesquelles les achats sont engages",
+    icon: IconPurchaseOrder,
+  },
+  {
     href: "/purchase-orders",
     label: "Bons de commande",
     permission: "procurement.view",
@@ -56,6 +72,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: IconBilling,
   },
   {
+    href: "/match-runs",
+    label: "Rapprochements",
+    permission: "matching.view",
+    description: "Registre des executions du moteur, immuables",
+    icon: IconShield,
+  },
+  {
     href: "/exceptions",
     label: "Ecarts a arbitrer",
     permission: "matching.view",
@@ -68,6 +91,20 @@ export const NAV_ITEMS: NavItem[] = [
     permission: "payments.view",
     description: "Ce qui est aujourd'hui payable",
     icon: IconPayment,
+  },
+  {
+    href: "/currencies",
+    label: "Devises et taux",
+    permission: "currencies.view",
+    description: "Referentiel des devises et historique des cotations",
+    icon: IconBanknote,
+  },
+  {
+    href: "/audit",
+    label: "Journal d'audit",
+    permission: "audit.view",
+    description: "Qui a change quoi, quand — en lecture seule",
+    icon: IconShield,
   },
   {
     href: "/users",
