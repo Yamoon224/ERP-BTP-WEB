@@ -37,7 +37,7 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       <TextField
-        label="Adresse e-mail"
+        label="Email"
         required
         type="email"
         name="email"
