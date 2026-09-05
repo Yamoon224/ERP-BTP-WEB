@@ -71,7 +71,7 @@ describe("InvoiceCurrencyDialog", () => {
 
     await waitFor(() => {
       const sent = api.calls.find(
-        (call) => call.method === "PATCH" && call.path === "/invoices/9/currency",
+        (call) => call.method === "PATCH" && call.path === `/invoices/${testId(9)}/currency`,
       );
       expect(sent?.body).toEqual({ currency: "XOF" });
     });

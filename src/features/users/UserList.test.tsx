@@ -150,7 +150,7 @@ describe("UserList", () => {
     );
 
     await waitFor(() => {
-      expect(api.calls.some((call) => call.method === "DELETE" && call.path === "/users/11")).toBe(
+      expect(api.calls.some((call) => call.method === "DELETE" && call.path === `/users/${testId(11)}`)).toBe(
         true,
       );
     });

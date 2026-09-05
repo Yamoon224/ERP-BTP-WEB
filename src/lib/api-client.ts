@@ -83,6 +83,39 @@ export function clearToken(): void {
   }
 }
 
+/**
+ * Réaction à un token refusé par l'API.
+ *
+ * Les jetons ont une durée de vie bornée côté backend
+ * (`SANCTUM_TOKEN_EXPIRATION`). Une fois ce délai passé, chaque requête revient
+ * en 401 : sans traitement central, l'utilisateur verrait toutes ses listes se
+ * remplir de messages d'erreur en restant, en apparence, connecté. Le token est
+ * donc effacé ici — au seul endroit qui voit passer toutes les réponses — et
+ * l'abonné (le contexte d'authentification) referme la session.
+ *
+ * Un 401 sans token envoyé n'est pas une expiration mais une simple visite
+ * anonyme : il ne déclenche rien.
+ */
+type UnauthenticatedListener = () => void;
+
+let unauthenticatedListener: UnauthenticatedListener | null = null;
+
+/** Abonne l'application aux jetons refusés. Renvoie de quoi se désabonner. */
+export function onUnauthenticated(listener: UnauthenticatedListener): () => void {
+  unauthenticatedListener = listener;
+
+  return () => {
+    if (unauthenticatedListener === listener) unauthenticatedListener = null;
+  };
+}
+
+function handleRefusedToken(sentToken: string | null): void {
+  if (sentToken === null) return;
+
+  clearToken();
+  unauthenticatedListener?.();
+}
+
 export interface RequestOptions extends Omit<RequestInit, "body"> {
   /** Corps sérialisé en JSON automatiquement. */
   body?: unknown;
@@ -128,6 +161,8 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   }
 
   if (!response.ok) {
+    if (response.status === 401) handleRefusedToken(token);
+
     const errorBody = (await response.json().catch(() => null)) as ApiErrorBody | null;
     throw new ApiError(response.status, errorBody);
   }
@@ -168,6 +203,8 @@ export async function apiDownload(path: string, fallbackFilename: string): Promi
   }
 
   if (!response.ok) {
+    if (response.status === 401) handleRefusedToken(token);
+
     const errorBody = (await response.json().catch(() => null)) as ApiErrorBody | null;
     throw new ApiError(response.status, errorBody);
   }

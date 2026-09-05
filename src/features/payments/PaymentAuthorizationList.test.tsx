@@ -119,7 +119,7 @@ describe("PaymentAuthorizationList", () => {
 
     await waitFor(() => {
       const posted = api.calls.find((call) => call.method === "POST");
-      expect(posted?.path).toBe("/payment-authorizations/42/settle");
+      expect(posted?.path).toBe(`/payment-authorizations/${testId(42)}/settle`);
       const body = posted?.body as Record<string, unknown>;
       expect(body.payment_reference).toBe("VIR-2026-00099");
       expect(body).not.toHaveProperty("amount");

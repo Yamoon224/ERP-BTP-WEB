@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { Button, PasswordField, TextField } from "@/components/ui";
+import { Button, FormAlert, PasswordField, TextField } from "@/components/ui";
 import { IconArrowRight, IconException } from "@/components/ui/icons";
 import { useAuth } from "@/features/auth/AuthContext";
 import { errorMessage } from "@/lib/api-client";
 
 export function LoginForm() {
-  const { login } = useAuth();
+  const { login, hasExpired } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -36,6 +36,15 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+      {/* La session s'est refermée seule : le dire évite que l'utilisateur
+          cherche ce qu'il a fait de travers. Masqué dès qu'une erreur de
+          connexion s'affiche — deux bandeaux successifs se contrediraient. */}
+      {hasExpired && error === null ? (
+        <FormAlert tone="warning">
+          Votre session a expiré. Reconnectez-vous pour reprendre où vous en étiez.
+        </FormAlert>
+      ) : null}
+
       <TextField
         label="Email"
         required

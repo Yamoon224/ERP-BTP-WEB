@@ -253,7 +253,12 @@ export function ProjectList() {
           ) : null}
 
           {!isLoading && !error && items.length > 0 ? (
-            <ul className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 xl:grid-cols-3">
+            {/* Deux cartes par ligne, et pas trois : la colonne d'une grille a
+                trois etait trop etroite pour que « Détail / Modifier /
+                Supprimer » tiennent sur une meme ligne. Une seule colonne sous
+                `md`, ou deux cartes cote a cote ne laisseraient plus la place
+                aux memes actions. */}
+            <ul className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2">
               {items.map((project) => (
                 <ProjectCard
                   key={project.id}
@@ -434,7 +439,11 @@ function ProjectCard({
         </div>
       </dl>
 
-      <div className="mt-auto flex flex-wrap gap-2 pt-1">
+      {/* `mt-auto` colle la barre d'actions au bas de la carte : les cartes
+          d'une meme ligne etant etirees a la meme hauteur, leurs boutons se
+          retrouvent alignes meme quand l'une porte un maitre d'ouvrage plus
+          long que l'autre. `flex-nowrap` les garde sur une seule ligne. */}
+      <div className="mt-auto flex flex-nowrap items-center gap-2 pt-1">
         <LinkButton
           size="sm"
           href={`/projects/${project.id}`}

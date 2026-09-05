@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { ApiError, clearToken } from "@/lib/api-client";
+import { ApiError, clearToken, onUnauthenticated } from "@/lib/api-client";
 import { authService } from "@/services";
 import type { User } from "@/types/api";
 
@@ -10,6 +10,13 @@ interface AuthContextValue {
   user: User | null;
   /** Vrai tant que la session initiale n'a pas été vérifiée auprès de l'API. */
   isInitialising: boolean;
+  /**
+   * Vrai quand la session s'est refermée d'elle-même, jeton expiré ou révoqué,
+   * par opposition à une déconnexion demandée. L'écran de connexion s'en sert
+   * pour dire pourquoi il est réapparu : sans cela, l'utilisateur croit à un
+   * bug et retente le geste qui vient d'échouer.
+   */
+  hasExpired: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   /**
@@ -31,6 +38,21 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitialising, setIsInitialising] = useState(true);
+  const [hasExpired, setHasExpired] = useState(false);
+
+  // Un token peut expirer pendant que l'écran est ouvert. Le client d'API le
+  // signale ici plutôt que chaque écran ne le découvre par une erreur : la
+  // session se referme une fois, au lieu de laisser une interface qui a l'air
+  // connectée mais dont plus rien ne répond. La coquille des écrans
+  // authentifiés renvoie alors vers /login, puisqu'il n'y a plus d'utilisateur.
+  useEffect(
+    () =>
+      onUnauthenticated(() => {
+        setUser(null);
+        setHasExpired(true);
+      }),
+    [],
+  );
 
   // Un token peut survivre à la fermeture du navigateur : on le confronte à
   // l'API au démarrage plutôt que de faire confiance au stockage local.
@@ -55,7 +77,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    setUser(await authService.login({ email, password }));
+    const authenticated = await authService.login({ email, password });
+    setHasExpired(false);
+    setUser(authenticated);
   }, []);
 
   const logout = useCallback(async () => {
@@ -73,8 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isInitialising, login, logout, refresh, can }),
-    [user, isInitialising, login, logout, refresh, can],
+    () => ({ user, isInitialising, hasExpired, login, logout, refresh, can }),
+    [user, isInitialising, hasExpired, login, logout, refresh, can],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

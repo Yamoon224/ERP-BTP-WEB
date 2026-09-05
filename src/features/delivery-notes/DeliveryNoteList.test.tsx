@@ -122,7 +122,7 @@ describe("DeliveryNoteList", () => {
 
     await waitFor(() => {
       const reviewCall = api.calls.find((call) => call.method === "POST");
-      expect(reviewCall?.path).toBe("/delivery-notes/4/review");
+      expect(reviewCall?.path).toBe(`/delivery-notes/${testId(4)}/review`);
       expect(reviewCall?.body).toEqual({ status: "accepted" });
     });
 
