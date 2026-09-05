@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Sortie de `next build` : elle vit hors de `.next` pour ne pas ecraser le
+    // cache du serveur de developpement (voir next.config.ts).
+    ".next-build/**",
   ]),
 ]);
 
