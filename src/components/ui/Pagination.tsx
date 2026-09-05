@@ -135,11 +135,16 @@ function PageButton({
       onClick={onClick}
       aria-label={label}
       className={cn(
-        "inline-flex items-center gap-1 rounded-sm px-2.5 py-1.5 font-medium transition-colors",
-        "text-slate-600 ring-1 ring-inset ring-slate-300 hover:bg-blue-50 hover:text-blue-700 hover:ring-blue-300",
-        "disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-transparent disabled:hover:text-slate-600 disabled:hover:ring-slate-300",
-        "dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-blue-950/60 dark:hover:text-blue-300 dark:hover:ring-blue-700",
-        "dark:disabled:hover:text-slate-300 dark:disabled:hover:ring-slate-700",
+        "inline-flex items-center gap-1 rounded-sm px-2.5 py-1.5 font-medium transition-all duration-150",
+        // Le degrade de marque : ce sont les deux seules commandes de la barre,
+        // et rien d'autre ne doit se disputer le regard avec elles.
+        "grad-brand text-white shadow-sm hover:grad-brand-hover hover:shadow-md active:translate-y-px",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
+        // Desactive, le bouton perd son degrade : un bouton bleu vif qui ne
+        // repond pas est plus trompeur qu'un bouton visiblement eteint.
+        "disabled:cursor-not-allowed disabled:bg-none disabled:bg-slate-200 disabled:text-slate-400",
+        "disabled:shadow-none disabled:active:translate-y-0",
+        "dark:disabled:bg-slate-800 dark:disabled:text-slate-500",
       )}
     >
       {iconFirst ? icon : null}

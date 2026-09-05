@@ -16,5 +16,12 @@ export const config = {
   tokenStorageKey: "erp_auth_token",
 
   /** Taille de page par défaut des listes. */
-  defaultPageSize: 15,
+  defaultPageSize: 10,
+
+  /**
+   * Devise de reference du circuit. Sert de valeur par defaut aux formulaires
+   * et d'unite d'agregation : elle doit rester alignee sur
+   * `config/matching.php` cote backend, qui fait foi.
+   */
+  defaultCurrency: "XOF",
 } as const;
