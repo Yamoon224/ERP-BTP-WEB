@@ -1,0 +1,79 @@
+import type { ComponentType } from "react";
+import {
+  IconDashboard,
+  IconDelivery,
+  IconException,
+  IconBilling,
+  IconPayment,
+  IconPurchaseOrder,
+  IconUsers,
+} from "@/components/ui/icons";
+import type { IconProps } from "@/components/ui/icons";
+
+/**
+ * Navigation principale. Chaque entree porte la permission qui la rend utile :
+ * afficher un lien qui menera a un 403 est une mauvaise experience, et masquer
+ * la navigation d'un role qui ne peut rien y faire clarifie son perimetre.
+ *
+ * L'icone n'est pas decorative : barre laterale reduite, elle devient le seul
+ * repere du lien. Elle doit donc etre distinctive avant d'etre jolie.
+ */
+export interface NavItem {
+  href: string;
+  label: string;
+  permission: string;
+  description: string;
+  icon: ComponentType<IconProps>;
+}
+
+export const NAV_ITEMS: NavItem[] = [
+  {
+    href: "/dashboard",
+    label: "Tableau de bord",
+    permission: "matching.view",
+    description: "Montants autorises, montants bloques, charge de revue",
+    icon: IconDashboard,
+  },
+  {
+    href: "/purchase-orders",
+    label: "Bons de commande",
+    permission: "procurement.view",
+    description: "Ce qui a ete engage aupres des fournisseurs",
+    icon: IconPurchaseOrder,
+  },
+  {
+    href: "/delivery-notes",
+    label: "Bons de livraison",
+    permission: "receiving.view",
+    description: "Ce qui a ete recu et controle",
+    icon: IconDelivery,
+  },
+  {
+    href: "/invoices",
+    label: "Factures",
+    permission: "invoicing.view",
+    description: "Creances fournisseurs et leur rapprochement",
+    icon: IconBilling,
+  },
+  {
+    href: "/exceptions",
+    label: "Ecarts a arbitrer",
+    permission: "matching.view",
+    description: "File de revue humaine",
+    icon: IconException,
+  },
+  {
+    href: "/payments",
+    label: "Autorisations de paiement",
+    permission: "payments.view",
+    description: "Ce qui est aujourd'hui payable",
+    icon: IconPayment,
+  },
+  {
+    href: "/users",
+    label: "Utilisateurs",
+    permission: "users.view",
+    description: "Comptes, roles et separation des taches",
+    icon: IconUsers,
+  },
+];

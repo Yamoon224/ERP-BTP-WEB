@@ -1,0 +1,369 @@
+"use client";
+
+import { useCallback, useState } from "react";
+import type { FormEvent } from "react";
+import {
+  Button,
+  FormAlert,
+  LoadingState,
+  Modal,
+  ResourceSelect,
+  SelectField,
+  TextField,
+} from "@/components/ui";
+import type { ResourceOption } from "@/components/ui";
+import { IconBilling } from "@/components/ui/icons";
+import { useAsyncData } from "@/hooks/useAsyncData";
+import { useMutation } from "@/hooks/useMutation";
+import { errorMessage } from "@/lib/api-client";
+import { CURRENCIES, CURRENCY_LABEL } from "@/lib/currency";
+import { formatMoney, formatQuantity } from "@/lib/format";
+import { invoiceService, purchaseOrderService } from "@/services";
+import type { InvoiceInput } from "@/services/invoice-service";
+import type { PurchaseOrder, PurchaseOrderLine } from "@/types/api";
+
+const today = () => new Date().toISOString().slice(0, 10);
+const inThirtyDays = () => new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
+
+/** Statuts d'un bon de commande qui acceptent encore des documents. */
+const OPEN_STATUSES = ["open", "partially_received", "fully_received"];
+
+/**
+ * Saisie d'une facture fournisseur.
+ *
+ * Soumettre une facture **declenche immediatement son rapprochement** : le
+ * controle a 3 voies est la porte d'entree du circuit de paiement, pas une
+ * etape qu'on penserait a lancer plus tard. Le formulaire l'annonce, parce que
+ * la facture peut ressortir en litige dans la seconde qui suit.
+ *
+ * Ni le fournisseur ni le total ne sont saisissables : le premier vient du bon
+ * de commande — c'est ce qui garantit que la comparaison porte sur une donnee
+ * que l'emetteur de la facture ne choisit pas — et le second est recalcule
+ * depuis les lignes.
+ */
+export function InvoiceFormDialog({
+  isOpen,
+  onClose,
+  onCreated,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [reference, setReference] = useState("");
+  const [purchaseOrder, setPurchaseOrder] = useState<ResourceOption | null>(null);
+  const [invoiceDate, setInvoiceDate] = useState(today);
+  const [dueDate, setDueDate] = useState(inThirtyDays);
+
+  // Comme pour la reception : seules les valeurs *corrigees* sont memorisees.
+  // Le reste se lit sur le bon de commande a l'affichage, ce qui evite d'avoir
+  // a resynchroniser un etat local quand le bon change.
+  const [quantities, setQuantities] = useState<Record<number, string>>({});
+  const [prices, setPrices] = useState<Record<number, string>>({});
+  const [excluded, setExcluded] = useState<Record<number, true>>({});
+  const [currencyOverride, setCurrencyOverride] = useState<string | null>(null);
+
+  const action = useCallback((input: InvoiceInput) => invoiceService.submit(input), []);
+  const { run, isPending, error, fieldErrors, reset } = useMutation(action);
+
+  const loadPurchaseOrders = useCallback(async (search: string): Promise<ResourceOption[]> => {
+    const page = await purchaseOrderService.list({ search, per_page: 20 });
+
+    return page.data
+      .filter((order) => OPEN_STATUSES.includes(order.status))
+      .map((order) => ({
+        value: order.id,
+        label: order.reference,
+        hint: [order.supplier?.name, order.project?.name].filter(Boolean).join(" · "),
+      }));
+  }, []);
+
+  const loadOrder = useCallback(
+    (): Promise<PurchaseOrder | null> =>
+      purchaseOrder === null
+        ? Promise.resolve(null)
+        : purchaseOrderService.find(purchaseOrder.value),
+    [purchaseOrder],
+  );
+
+  const { data: order, isLoading: isLoadingLines, error: linesError } = useAsyncData(loadOrder);
+
+  const orderLines: PurchaseOrderLine[] = purchaseOrder === null ? [] : (order?.lines ?? []);
+
+  // La facture reprend par defaut la devise du bon de commande, jusqu'a ce que
+  // l'utilisateur en choisisse une autre — un fournisseur facture dans la sienne.
+  const currency = currencyOverride ?? order?.currency ?? "EUR";
+
+  const quantityOf = (line: PurchaseOrderLine) =>
+    quantities[line.id] ?? String(line.quantity_ordered);
+  const priceOf = (line: PurchaseOrderLine) => prices[line.id] ?? String(line.unit_price);
+  const isIncluded = (line: PurchaseOrderLine) => excluded[line.id] !== true;
+
+  function selectPurchaseOrder(option: ResourceOption | null) {
+    setPurchaseOrder(option);
+    setQuantities({});
+    setPrices({});
+    setExcluded({});
+    setCurrencyOverride(null);
+  }
+
+  function toggleLine(line: PurchaseOrderLine, include: boolean) {
+    setExcluded((current) => {
+      const next = { ...current };
+      if (include) delete next[line.id];
+      else next[line.id] = true;
+
+      return next;
+    });
+  }
+
+  function handleClose() {
+    setReference("");
+    selectPurchaseOrder(null);
+    setInvoiceDate(today());
+    setDueDate(inThirtyDays());
+    reset();
+    onClose();
+  }
+
+  const selectedLines = orderLines.filter(isIncluded);
+
+  const total = selectedLines.reduce(
+    (sum, line) => sum + (Number(quantityOf(line)) || 0) * (Number(priceOf(line)) || 0),
+    0,
+  );
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    if (!purchaseOrder) return;
+
+    const result = await run({
+      reference,
+      purchase_order_id: purchaseOrder.value,
+      currency,
+      invoice_date: invoiceDate,
+      due_date: dueDate === "" ? null : dueDate,
+      lines: selectedLines.map((line) => ({
+        purchase_order_line_id: line.id,
+        description: line.description,
+        quantity: Number(quantityOf(line)),
+        unit_price: Number(priceOf(line)),
+      })),
+    });
+
+    if (result) {
+      onCreated();
+      handleClose();
+    }
+  }
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      size="lg"
+      title="Saisir une facture"
+      description="La facture est rapprochée dès sa soumission : le résultat du contrôle sera disponible immédiatement."
+      footer={
+        <>
+          <Button type="button" variant="secondary" onClick={handleClose} disabled={isPending}>
+            Annuler
+          </Button>
+          <Button
+            type="submit"
+            form="invoice-form"
+            isLoading={isPending}
+            disabled={selectedLines.length === 0}
+            icon={<IconBilling className="h-4 w-4" />}
+          >
+            Soumettre et rapprocher
+          </Button>
+        </>
+      }
+    >
+      <form id="invoice-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <TextField
+            label="Référence fournisseur"
+            required
+            placeholder="FAC-2026-0042"
+            value={reference}
+            errors={fieldErrors.reference}
+            onChange={(event) => setReference(event.target.value)}
+          />
+
+          <ResourceSelect
+            label="Bon de commande"
+            required
+            placeholder="Rechercher une référence de commande…"
+            selected={purchaseOrder}
+            onChange={selectPurchaseOrder}
+            loadOptions={loadPurchaseOrders}
+            errors={fieldErrors.purchase_order_id}
+            emptyLabel="Aucun bon de commande ouvert ne correspond"
+          />
+
+          <TextField
+            label="Date de facture"
+            required
+            type="date"
+            placeholder="2026-09-05"
+            value={invoiceDate}
+            errors={fieldErrors.invoice_date}
+            onChange={(event) => setInvoiceDate(event.target.value)}
+          />
+
+          <TextField
+            label="Échéance"
+            type="date"
+            placeholder="2026-10-05"
+            value={dueDate}
+            errors={fieldErrors.due_date}
+            onChange={(event) => setDueDate(event.target.value)}
+          />
+
+          <SelectField
+            label="Devise de facturation"
+            value={currency}
+            errors={fieldErrors.currency}
+            hint="Si elle diffère de celle du bon de commande, le moteur convertit au taux du jour de la facture."
+            onChange={(event) => setCurrencyOverride(event.target.value)}
+          >
+            {CURRENCIES.map((code) => (
+              <option key={code} value={code}>
+                {code} — {CURRENCY_LABEL[code]}
+              </option>
+            ))}
+          </SelectField>
+        </div>
+
+        {purchaseOrder && isLoadingLines ? (
+          <LoadingState label="Chargement des lignes commandées…" />
+        ) : null}
+
+        {linesError ? (
+          <FormAlert>
+            {errorMessage(linesError, "Les lignes du bon de commande n'ont pas pu être chargées.")}
+          </FormAlert>
+        ) : null}
+
+        {orderLines.length > 0 ? (
+          <fieldset className="flex flex-col gap-3">
+            <legend className="text-xs font-medium text-slate-700 dark:text-slate-300">
+              Lignes facturées
+            </legend>
+
+            <div className="overflow-x-auto rounded-sm border border-slate-200 dark:border-slate-800">
+              <table className="w-full min-w-[620px] text-sm">
+                <thead className="grad-brand text-white">
+                  <tr>
+                    <th className="w-10 px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider">
+                      <span className="sr-only">Inclure</span>
+                    </th>
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider">
+                      Article
+                    </th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wider">
+                      Commandé
+                    </th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wider">
+                      Quantité
+                    </th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wider">
+                      Prix unitaire
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orderLines.map((line) => {
+                    const included = isIncluded(line);
+
+                    return (
+                      <tr
+                        key={line.id}
+                        className="border-b border-slate-100 odd:bg-[var(--surface)] even:bg-slate-50/70 last:border-0 dark:border-slate-800/70 dark:even:bg-slate-800/40"
+                      >
+                        <td className="px-3 py-2">
+                          <input
+                            type="checkbox"
+                            aria-label={`Facturer la ligne ${line.item_code}`}
+                            checked={included}
+                            onChange={(event) => toggleLine(line, event.target.checked)}
+                            className="accent-blue-600"
+                          />
+                        </td>
+                        <td className="px-3 py-2">
+                          <p className="font-medium text-slate-900 dark:text-slate-100">
+                            {line.item_code}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {line.description}
+                          </p>
+                        </td>
+                        <td className="px-3 py-2 text-right text-xs tabular-nums text-slate-500 dark:text-slate-400">
+                          {formatQuantity(line.quantity_ordered, line.unit)}
+                          <br />à {line.unit_price}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.001"
+                            disabled={!included}
+                            aria-label={`Quantité facturée pour ${line.item_code}`}
+                            value={quantityOf(line)}
+                            onChange={(event) =>
+                              setQuantities((current) => ({
+                                ...current,
+                                [line.id]: event.target.value,
+                              }))
+                            }
+                            className="w-28 rounded-sm border-0 bg-[var(--surface)] px-2 py-1.5 text-right text-sm tabular-nums text-slate-900 ring-1 ring-inset ring-slate-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600 disabled:opacity-50 dark:text-slate-100 dark:ring-slate-600"
+                          />
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.0001"
+                            disabled={!included}
+                            aria-label={`Prix unitaire facturé pour ${line.item_code}`}
+                            value={priceOf(line)}
+                            onChange={(event) =>
+                              setPrices((current) => ({
+                                ...current,
+                                [line.id]: event.target.value,
+                              }))
+                            }
+                            className="w-32 rounded-sm border-0 bg-[var(--surface)] px-2 py-1.5 text-right text-sm tabular-nums text-slate-900 ring-1 ring-inset ring-slate-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600 disabled:opacity-50 dark:text-slate-100 dark:ring-slate-600"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="max-w-md text-xs text-slate-500 dark:text-slate-400">
+                Pré-remplies au bon de commande. Tout écart de prix ou de quantité sera signalé
+                pour arbitrage, jamais accepté en silence.
+              </p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                Total facturé :{" "}
+                <strong className="tabular-nums text-slate-900 dark:text-slate-100">
+                  {formatMoney(total, currency)}
+                </strong>
+              </p>
+            </div>
+          </fieldset>
+        ) : null}
+
+        {error && Object.keys(fieldErrors).length === 0 ? (
+          <FormAlert>{errorMessage(error, "La soumission de la facture a échoué.")}</FormAlert>
+        ) : null}
+      </form>
+    </Modal>
+  );
+}

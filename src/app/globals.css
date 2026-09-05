@@ -1,0 +1,324 @@
+@import "tailwindcss";
+
+/*
+ * Trois modes de theme - clair (defaut), sombre, systeme - pilotes par une
+ * classe sur <html> plutot que par la seule media query : un utilisateur doit
+ * pouvoir choisir l'inverse de son systeme, et ce choix doit survivre au
+ * rechargement. La variante `dark:` de Tailwind est donc rebranchee sur `.dark`.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Menlo, monospace;
+
+  /* Bleu de marque : une seule rampe, declinee en degrade diagonal. */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+}
+
+:root {
+  color-scheme: light;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+  --canvas: #f4f7fb;
+  --foreground: #0f172a;
+  --hairline: #e2e8f0;
+  --card-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 10px 26px -12px rgb(15 23 42 / 0.28);
+  --card-shadow-hover: 0 2px 4px rgb(15 23 42 / 0.08), 0 18px 38px -14px rgb(29 78 216 / 0.35);
+}
+
+.dark {
+  color-scheme: dark;
+  --surface: #0f172a;
+  --surface-muted: #1e293b;
+  --canvas: #060b18;
+  --foreground: #e2e8f0;
+  --hairline: #1e293b;
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 30px -14px rgb(0 0 0 / 0.8);
+  --card-shadow-hover: 0 2px 6px rgb(0 0 0 / 0.55), 0 20px 42px -16px rgb(37 99 235 / 0.45);
+}
+
+body {
+  background-color: var(--canvas);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Le degrade de marque, toujours diagonal : une seule definition, reprise par
+   les boutons, le logo, les accents de cartes et les etats actifs. */
+@utility grad-brand {
+  background-image: linear-gradient(135deg, #60a5fa 0%, #2563eb 48%, #1d4ed8 100%);
+}
+
+@utility grad-brand-hover {
+  background-image: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 48%, #1e3a8a 100%);
+}
+
+@utility grad-brand-soft {
+  background-image: linear-gradient(135deg, rgb(59 130 246 / 0.12) 0%, rgb(29 78 216 / 0.06) 100%);
+}
+
+@utility grad-brand-text {
+  background-image: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Ombre portee volontairement visible : c'est elle qui detache les cartes du
+   fond et donne la hierarchie de l'interface. */
+@utility shadow-card {
+  box-shadow: var(--card-shadow);
+}
+
+@utility shadow-card-hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-fade-rise {
+  animation: fade-rise 0.24s ease-out both;
+}
+
+/* Barres de defilement discretes : sur des tableaux larges, la barre native
+   claire sur fond sombre casse immediatement l'illusion du theme. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--foreground) 22%, transparent) transparent;
+}
+
+::selection {
+  background-color: rgb(37 99 235 / 0.22);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Champ a libelle flottant, contour unique
+ * ---------------------------------------------------------------------------
+ *
+ * Le contour n'est pas porte par le controle mais par un <fieldset> pose
+ * par-dessus lui. Sa <legend> decoupe un VRAI trou dans le trait au moment ou
+ * le libelle monte : il n'y a donc rien a masquer derriere un fond opaque.
+ *
+ * C'est ce qui reglait le « double trait » des libelles flottants classiques —
+ * un libelle sur fond `--surface` pose sur une bordure laisse reapparaitre le
+ * trait des que le conteneur n'a pas exactement ce fond (carte teintee, ligne
+ * de tableau, barre de filtres). Ici le trait est absent, pas recouvert.
+ *
+ * Le controle lui-meme n'a donc ni `border` ni `ring` : une seule ligne existe.
+ */
+
+:root {
+  --field-border: #cbd5e1;
+  --field-border-hover: #94a3b8;
+  --field-border-focus: #2563eb;
+  --field-border-error: #f43f5e;
+  --field-label: #64748b;
+  --field-label-focus: #2563eb;
+  --field-placeholder: #94a3b8;
+  --field-disabled-bg: #f8fafc;
+}
+
+.dark {
+  --field-border: #475569;
+  --field-border-hover: #64748b;
+  --field-border-focus: #3b82f6;
+  --field-border-error: #fb7185;
+  --field-label: #94a3b8;
+  --field-label-focus: #60a5fa;
+  --field-placeholder: #64748b;
+  --field-disabled-bg: #1e293b;
+}
+
+/* Reserve la hauteur du libelle monte : sans cela il serait rogne par le
+   conteneur des que le champ est le premier element d'une carte. */
+.field-shell {
+  position: relative;
+  display: block;
+  margin-top: 0.4rem;
+}
+
+.field-control {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 2px;
+  background-color: transparent;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.35rem;
+  color: var(--foreground);
+  outline: none;
+}
+
+.field-control::placeholder {
+  color: transparent;
+  transition: color 0.12s ease-out;
+}
+
+/* Le placeholder n'apparait qu'une fois le libelle monte : les deux textes ne
+   se superposent jamais, et le format attendu s'affiche pile au moment ou
+   l'on s'apprete a taper. */
+.field-control:focus::placeholder {
+  color: var(--field-placeholder);
+}
+
+.field-control:disabled {
+  cursor: not-allowed;
+  background-color: var(--field-disabled-bg);
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+
+.field-control[type="search"]::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+/* --- Contour ------------------------------------------------------------- */
+
+.field-outline {
+  position: absolute;
+  inset: -0.4rem 0 0 0;
+  margin: 0;
+  padding: 0 0.5rem;
+  min-width: 0;
+  pointer-events: none;
+  border: 1px solid var(--field-border);
+  border-radius: 2px;
+  transition:
+    border-color 0.15s ease-out,
+    box-shadow 0.15s ease-out;
+}
+
+.field-outline > legend {
+  display: block;
+  float: none;
+  width: auto;
+  max-width: 0.01px;
+  height: 0.8rem;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  visibility: hidden;
+  font-size: 0.6875rem;
+  transition: max-width 0.12s ease-out;
+}
+
+.field-outline > legend > span {
+  display: inline-block;
+  padding: 0 0.3rem;
+  opacity: 0;
+  visibility: visible;
+}
+
+.field-shell:hover .field-outline {
+  border-color: var(--field-border-hover);
+}
+
+/* --- Libelle ------------------------------------------------------------- */
+
+.field-label {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  z-index: 1;
+  max-width: calc(100% - 1.6rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  pointer-events: none;
+  font-size: 0.875rem;
+  line-height: 1;
+  color: var(--field-label);
+  transition:
+    top 0.12s ease-out,
+    font-size 0.12s ease-out,
+    color 0.12s ease-out;
+}
+
+/* Le libelle d'un textarea ne se centre pas verticalement : sur quatre lignes
+   de saisie il flotterait au milieu du vide. */
+.field-shell--textarea .field-label {
+  top: 1.42rem;
+}
+
+/* --- Etat monte ----------------------------------------------------------
+ *
+ * Declenche par le focus OU par la presence d'une valeur. Les <select> et les
+ * champs de date ne connaissent pas `:placeholder-shown` : `:not()` les rend
+ * donc flottants en permanence, ce qui est exactement le comportement voulu —
+ * ils affichent toujours quelque chose.
+ */
+
+.field-control:focus ~ .field-outline > legend,
+.field-control:not(:placeholder-shown) ~ .field-outline > legend {
+  max-width: 100%;
+}
+
+.field-control:focus ~ .field-label,
+.field-control:not(:placeholder-shown) ~ .field-label {
+  top: -0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.field-control:focus ~ .field-label {
+  color: var(--field-label-focus);
+}
+
+.field-control:focus ~ .field-outline {
+  border-color: var(--field-border-focus);
+  box-shadow: inset 0 0 0 1px var(--field-border-focus);
+}
+
+/* --- Erreur et desactivation --------------------------------------------- */
+
+.field-control[aria-invalid="true"] ~ .field-outline {
+  border-color: var(--field-border-error);
+}
+
+.field-control[aria-invalid="true"]:focus ~ .field-outline {
+  box-shadow: inset 0 0 0 1px var(--field-border-error);
+}
+
+.field-control[aria-invalid="true"] ~ .field-label,
+.field-control[aria-invalid="true"]:focus ~ .field-label {
+  color: var(--field-border-error);
+}
+
+.field-control:disabled ~ .field-outline {
+  border-color: color-mix(in srgb, var(--field-border) 55%, transparent);
+}
+
+/* Impression : les factures s'exportent en PDF cote serveur, mais un ecran de
+   detail doit rester imprimable sans la navigation. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

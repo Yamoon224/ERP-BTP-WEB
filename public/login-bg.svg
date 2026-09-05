@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Fond graphique">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="45%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#0b1220"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#93c5fd" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.25"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0V60" fill="none" stroke="#93c5fd" stroke-opacity="0.14" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="1400" fill="url(#sky)"/>
+  <rect width="1200" height="1400" fill="url(#grid)"/>
+  <circle cx="960" cy="240" r="420" fill="url(#glow)"/>
+  <circle cx="180" cy="1120" r="360" fill="url(#glow)" opacity="0.7"/>
+
+  <!-- Silhouette de chantier : grue et structures, tracees au trait. -->
+  <g stroke="#bfdbfe" stroke-opacity="0.5" fill="none" stroke-width="3" stroke-linejoin="round">
+    <path d="M250 1180V520"/>
+    <path d="M180 1180h140"/>
+    <path d="M100 520h700"/>
+    <path d="M250 520 120 520 250 440 380 520"/>
+    <path d="M250 440v-70"/>
+    <path d="M250 370 800 520"/>
+    <path d="M250 370 130 520"/>
+    <path d="M560 520v150"/>
+    <path d="M560 670h-70l70 90 70-90h-70"/>
+    <path d="M250 1180V520" stroke-dasharray="18 26"/>
+    <path d="M280 1180V560h240v620"/>
+    <path d="M520 760h230v420H520"/>
+    <path d="M750 900h180v280H750"/>
+  </g>
+
+  <g fill="#93c5fd" fill-opacity="0.16">
+    <rect x="310" y="600" width="70" height="52" rx="4"/>
+    <rect x="410" y="600" width="70" height="52" rx="4"/>
+    <rect x="310" y="700" width="70" height="52" rx="4"/>
+    <rect x="410" y="700" width="70" height="52" rx="4"/>
+    <rect x="310" y="800" width="70" height="52" rx="4"/>
+    <rect x="410" y="800" width="70" height="52" rx="4"/>
+    <rect x="560" y="820" width="70" height="52" rx="4"/>
+    <rect x="650" y="820" width="70" height="52" rx="4"/>
+    <rect x="560" y="920" width="70" height="52" rx="4"/>
+    <rect x="650" y="920" width="70" height="52" rx="4"/>
+    <rect x="790" y="960" width="60" height="46" rx="4"/>
+    <rect x="870" y="960" width="60" height="46" rx="4"/>
+    <rect x="790" y="1050" width="60" height="46" rx="4"/>
+    <rect x="870" y="1050" width="60" height="46" rx="4"/>
+  </g>
+
+  <!-- Trois voies du controle, suggerees par trois traits convergents. -->
+  <g stroke="url(#beam)" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M900 1260 1080 1080"/>
+    <path d="M840 1300 1080 1160"/>
+    <path d="M960 1320 1100 1240"/>
+  </g>
+
+  <rect y="1180" width="1200" height="220" fill="#020617" fill-opacity="0.45"/>
+</svg>
