@@ -9,7 +9,7 @@ export default function UsersPage() {
     <>
       <PageHeader
         title="Utilisateurs"
-        description="Qui accède à quoi. La séparation des tâches — commander, réceptionner, facturer, arbitrer — se règle ici, par les rôles."
+        description="Qui accède à quoi. La séparation des tâches - commander, réceptionner, facturer, arbitrer - se règle ici, par les rôles."
         icon={<IconUsers className="h-5 w-5" />}
       />
       <UserList />

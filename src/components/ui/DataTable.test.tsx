@@ -27,7 +27,7 @@ const COLUMNS: Array<Column<Row>> = [
   },
   // Sans `sortKey` : une colonne d'actions n'a pas d'ordre qui veuille dire
   // quelque chose.
-  { key: "actions", header: "Actions", cell: () => "—" },
+  { key: "actions", header: "Actions", cell: () => "-" },
 ];
 
 function renderTable(props: Partial<React.ComponentProps<typeof DataTable<Row>>> = {}) {

@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/ui";
 import { IconUser } from "@/components/ui/icons";
 import { ProfileView } from "@/features/profile/ProfileView";
 
-export const metadata = { title: "Mon profil — ERP BTP" };
+export const metadata = { title: "Mon profil - ERP BTP" };
 
 export default function ProfilePage() {
   return (

@@ -5,7 +5,7 @@ import { ThemeScript } from "@/components/theme/theme-script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ERP BTP — Rapprochement à 3 voies",
+  title: "ERP BTP - Rapprochement à 3 voies",
   description:
     "Contrôle des règlements fournisseurs par rapprochement du bon de commande, du bon de livraison et de la facture.",
 };

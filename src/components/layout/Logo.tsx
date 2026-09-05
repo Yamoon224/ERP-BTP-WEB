@@ -15,7 +15,7 @@ const ICON_CLASSES = {
 
 /**
  * Marque de l'application : une facture, parce que c'est l'objet autour duquel
- * tourne tout le produit — ce qui est reclame, et que le rapprochement autorise
+ * tourne tout le produit - ce qui est reclame, et que le rapprochement autorise
  * ou bloque.
  */
 export function LogoMark({

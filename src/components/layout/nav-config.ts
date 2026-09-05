@@ -43,7 +43,7 @@ export const NAV_ITEMS: NavItem[] = [
     href: "/suppliers",
     label: "Fournisseurs",
     permission: "procurement.view",
-    description: "Qui nous facture — le referentiel d'ou part le circuit",
+    description: "Qui nous facture - le referentiel d'ou part le circuit",
     icon: IconBuilding,
   },
   {
@@ -106,7 +106,7 @@ export const NAV_ITEMS: NavItem[] = [
     href: "/audit",
     label: "Journal d'audit",
     permission: "audit.view",
-    description: "Qui a change quoi, quand — en lecture seule",
+    description: "Qui a change quoi, quand - en lecture seule",
     icon: IconHistory,
   },
   {

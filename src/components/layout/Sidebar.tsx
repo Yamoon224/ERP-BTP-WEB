@@ -11,7 +11,7 @@ import { NAV_ITEMS } from "./nav-config";
 
 export interface SidebarProps {
   isCollapsed: boolean;
-  /** Ouverture du tiroir sur mobile — la barre est hors flux en dessous de md. */
+  /** Ouverture du tiroir sur mobile - la barre est hors flux en dessous de md. */
   isMobileOpen: boolean;
   onCloseMobile: () => void;
 }

@@ -4,7 +4,7 @@ import { LogoMark } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { LoginForm } from "@/features/auth/LoginForm";
 
-export const metadata = { title: "Connexion — ERP BTP" };
+export const metadata = { title: "Connexion - ERP BTP" };
 
 const PILLARS = [
   {
@@ -12,7 +12,7 @@ const PILLARS = [
     text: "Ce qui a été engagé auprès du fournisseur, en quantité et en prix.",
   },
   { title: "Bon de livraison", text: "Ce qui est réellement arrivé et a été accepté." },
-  { title: "Facture", text: "Ce qui est réclamé — et ce qui, seul, devient payable." },
+  { title: "Facture", text: "Ce qui est réclamé - et ce qui, seul, devient payable." },
 ];
 
 /**
@@ -84,7 +84,7 @@ export default function LoginPage() {
                   className="grad-brand mt-2.5 block h-[3px] w-14 rounded-full"
                 />
                 <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-                  Rapprochement à 3 voies — accès réservé aux comptes autorisés.
+                  Rapprochement à 3 voies - accès réservé aux comptes autorisés.
                 </p>
               </div>
 
@@ -97,7 +97,7 @@ export default function LoginPage() {
           <div className="mt-6 flex flex-col items-center gap-3">
             <ThemeToggle showLabels />
             <p className="text-center text-xs text-slate-400">
-              ERP BTP — contrôle des règlements fournisseurs
+              ERP BTP - contrôle des règlements fournisseurs
             </p>
           </div>
         </div>

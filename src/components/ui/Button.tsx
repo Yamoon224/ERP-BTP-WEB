@@ -32,7 +32,7 @@ const SIZE_CLASSES: Record<Size, string> = {
  * Un lien de navigation ne doit pas etre un `<button>` avec un `onClick` qui
  * change `location` : le clic milieu, l'ouverture dans un onglet et le survol
  * d'URL disparaitraient. `LinkButton` reutilise donc ces classes plutot que de
- * les recopier — sans quoi les deux finiraient par diverger d'un pixel.
+ * les recopier - sans quoi les deux finiraient par diverger d'un pixel.
  */
 export function buttonClasses({
   variant = "primary",

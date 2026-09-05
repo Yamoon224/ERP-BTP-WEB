@@ -12,8 +12,8 @@ import { cn } from "@/lib/cn";
 /**
  * Photo de profil du header et menu associe.
  *
- * Le menu regroupe ce qui concerne la personne connectee — son profil, son
- * theme, sa deconnexion — pour que le reste de l'en-tete reste consacre au
+ * Le menu regroupe ce qui concerne la personne connectee - son profil, son
+ * theme, sa deconnexion - pour que le reste de l'en-tete reste consacre au
  * contenu de l'ecran.
  */
 export function UserMenu() {

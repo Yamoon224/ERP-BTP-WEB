@@ -104,8 +104,8 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
 
 /**
  * Recherche : le seul champ dont le placeholder reste visible en permanence.
- * Un libelle flottant au-dessus d'une loupe n'apporterait rien — l'icone dit
- * deja ce que fait le champ — et volerait de la hauteur au tableau.
+ * Un libelle flottant au-dessus d'une loupe n'apporterait rien - l'icone dit
+ * deja ce que fait le champ - et volerait de la hauteur au tableau.
  */
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SearchInput({ className, label = "Rechercher", placeholder, ...props }, ref) {

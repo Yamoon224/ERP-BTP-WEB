@@ -6,7 +6,7 @@ import { ImageResponse } from "next/og";
  * Generee en PNG plutot que servie en SVG : la convention `apple-icon` de Next
  * n'accepte que des images matricielles, et un `apple-icon.svg` serait
  * silencieusement ignore. Elle reprend le meme dessin que `icon.svg` et que
- * `LogoMark` — une facture sur le degrade de marque.
+ * `LogoMark` - une facture sur le degrade de marque.
  */
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";

@@ -124,7 +124,7 @@ body {
  * par-dessus lui. Sa <legend> decoupe un VRAI trou dans le trait au moment ou
  * le libelle monte : il n'y a donc rien a masquer derriere un fond opaque.
  *
- * C'est ce qui reglait le « double trait » des libelles flottants classiques —
+ * C'est ce qui reglait le « double trait » des libelles flottants classiques -
  * un libelle sur fond `--surface` pose sur une bordure laisse reapparaitre le
  * trait des que le conteneur n'a pas exactement ce fond (carte teintee, ligne
  * de tableau, barre de filtres). Ici le trait est absent, pas recouvert.
@@ -279,7 +279,7 @@ body {
    *
    * Declenche par le focus OU par la presence d'une valeur. Les <select> et les
    * champs de date ne connaissent pas `:placeholder-shown` : `:not()` les rend
-   * donc flottants en permanence, ce qui est exactement le comportement voulu —
+   * donc flottants en permanence, ce qui est exactement le comportement voulu -
    * ils affichent toujours quelque chose.
    */
 
@@ -308,7 +308,7 @@ body {
    * Champ dont la valeur retenue n'est pas dans `value` mais affichee comme
    * placeholder : le selecteur de ressource, ou l'on tape pour chercher et ou
    * le choix courant doit rester lisible sans rien effacer. `:placeholder-shown`
-   * y est toujours vrai — sans cette classe, le libelle resterait couche sur le
+   * y est toujours vrai - sans cette classe, le libelle resterait couche sur le
    * nom du fournisseur choisi, et le champ ne s'alignerait pas sur ses voisins.
    */
   .field-control--filled::placeholder {

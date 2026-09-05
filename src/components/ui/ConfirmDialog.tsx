@@ -9,8 +9,8 @@ import { errorMessage } from "@/lib/api-client";
 /**
  * Confirmation d'une action irreversible.
  *
- * Factorisee parce que le meme dialogue — titre, consequence expliquee,
- * message d'echec, bouton rouge — se repetait a l'identique sur chaque ecran
+ * Factorisee parce que le meme dialogue - titre, consequence expliquee,
+ * message d'echec, bouton rouge - se repetait a l'identique sur chaque ecran
  * qui supprime quelque chose. Un refus metier (409) s'affiche ici plutot que
  * de disparaitre : c'est souvent la reponse la plus utile de l'ecran, celle
  * qui explique pourquoi la fiche ne peut pas partir.

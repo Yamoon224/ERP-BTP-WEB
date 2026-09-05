@@ -8,7 +8,7 @@ import { IconChevronsLeft, IconChevronsRight } from "@/components/ui/icons";
  *
  * Elle est posee sur l'intersection exacte des deux traits qui delimitent la
  * zone de travail : le bord droit de la barre laterale et le bas du bandeau
- * superieur. C'est la frontiere qu'elle deplace — un bouton pose ailleurs
+ * superieur. C'est la frontiere qu'elle deplace - un bouton pose ailleurs
  * demanderait d'apprendre ce qu'il fait, celui-ci le montre.
  *
  * La fleche pointe vers le mouvement a venir, pas vers l'etat courant :

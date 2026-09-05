@@ -395,7 +395,7 @@ export function IconKey(props: IconProps) {
 
 /**
  * Fournisseur : un batiment d'entreprise. Distinct de `IconUsers`, qui coiffe
- * les comptes de l'application — barre laterale reduite, l'icone est le seul
+ * les comptes de l'application - barre laterale reduite, l'icone est le seul
  * repere du lien, et deux entrees qui partagent la meme deviennent
  * indiscernables.
  */

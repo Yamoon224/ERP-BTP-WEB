@@ -9,7 +9,7 @@ import { controlClasses, FieldShell } from "./Field";
 import { IconChevronDown } from "./icons";
 
 export interface ResourceOption {
-  /** Identifiant de la ressource — un UUID, comme partout dans l'API. */
+  /** Identifiant de la ressource - un UUID, comme partout dans l'API. */
   value: string;
   label: string;
   /** Deuxieme ligne : code, chantier, statut… ce qui departage deux homonymes. */
@@ -20,7 +20,7 @@ export interface ResourceSelectProps {
   label: string;
   placeholder: string;
   /**
-   * Option retenue, en entier — pas seulement son identifiant. Le composant ne
+   * Option retenue, en entier - pas seulement son identifiant. Le composant ne
    * garde donc aucune copie de la selection : le parent est seul a la detenir,
    * et une remise a zero de son cote se voit immediatement ici.
    */
@@ -45,8 +45,8 @@ export interface ResourceSelectProps {
  * l'API, avec une pause de frappe, et la liste ne montre que ce qui
  * correspond.
  *
- * L'element choisi reste affiche apres selection — pas seulement son
- * identifiant — pour qu'un formulaire relu avant envoi reste verifiable.
+ * L'element choisi reste affiche apres selection - pas seulement son
+ * identifiant - pour qu'un formulaire relu avant envoi reste verifiable.
  *
  * L'habillage est celui de `Field` : meme coquille, meme libelle flottant,
  * meme hauteur. Ce champ voisine presque toujours avec des `TextField` dans

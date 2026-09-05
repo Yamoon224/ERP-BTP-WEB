@@ -21,7 +21,7 @@ export interface Column<T> {
   key: string;
   header: ReactNode;
   cell: (row: T) => ReactNode;
-  /** Classes appliquées à la cellule — alignement des montants, notamment. */
+  /** Classes appliquées à la cellule - alignement des montants, notamment. */
   className?: string;
   headerClassName?: string;
   /**
@@ -70,13 +70,13 @@ export interface DataTableProps<T> {
  * Tableau de données générique : une seule implémentation porte le rendu, la
  * recherche, le tri, la pagination et les états de chargement / erreur / vide.
  *
- * C'est le composant qui évite la duplication la plus coûteuse du frontend —
+ * C'est le composant qui évite la duplication la plus coûteuse du frontend -
  * sans lui, chaque écran de liste réécrirait sa propre gestion d'états, et ils
  * finiraient tous par se comporter légèrement différemment.
  *
  * Le tri est **délégué** : le tableau signale la colonne cliquée, l'écran la
  * transmet à l'API. Trier ici les quinze lignes affichées donnerait un ordre
- * qui change de sens à chaque page — le contraire de ce qu'attend quelqu'un
+ * qui change de sens à chaque page - le contraire de ce qu'attend quelqu'un
  * qui cherche le plus gros montant d'une liste de 150.
  */
 export function DataTable<T>({

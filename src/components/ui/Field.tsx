@@ -35,7 +35,7 @@ export interface FieldShellProps {
  * Consequence directe : le controle n'a ni `border` ni `ring`. Une seule ligne
  * dessine le champ, dans tous ses etats.
  *
- * La legende reprend le libelle — texte invisible mais dimensionnant — pour que
+ * La legende reprend le libelle - texte invisible mais dimensionnant - pour que
  * l'encoche fasse exactement la largeur du mot qui s'y loge.
  */
 export function FieldShell({
@@ -92,7 +92,7 @@ export interface FieldProps {
  * Enveloppe complete d'un champ : contour, libelle flottant, aide, erreurs.
  *
  * Le rendu par fonction transmet au controle son identifiant, sa classe
- * d'habillage et ses attributs d'accessibilite — de sorte que n'importe quel
+ * d'habillage et ses attributs d'accessibilite - de sorte que n'importe quel
  * element de saisie puisse prendre place dans la coquille.
  */
 export function Field({
@@ -148,7 +148,7 @@ export const floatingControlClasses = controlClasses;
 
 /**
  * Controle autonome, hors coquille flottante : recherche, filtres de barre
- * d'outils. Il porte son propre contour — un seul anneau, interieur, pour que
+ * d'outils. Il porte son propre contour - un seul anneau, interieur, pour que
  * le passage de 1 a 2 pixels au focus ne decale rien.
  */
 export const visiblePlaceholderClasses = cn(

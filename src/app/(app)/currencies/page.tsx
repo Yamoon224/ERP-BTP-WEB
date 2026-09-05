@@ -9,7 +9,7 @@ export default function CurrenciesPage() {
     <>
       <PageHeader
         title="Devises et taux de change"
-        description="Un contrat peut être libellé dans une devise et réglé dans une autre. Le taux retenu est celui en vigueur à la date de la facture — et il est archivé avec la décision."
+        description="Un contrat peut être libellé dans une devise et réglé dans une autre. Le taux retenu est celui en vigueur à la date de la facture - et il est archivé avec la décision."
         icon={<IconBanknote className="h-5 w-5" />}
       />
       <CurrencyView />

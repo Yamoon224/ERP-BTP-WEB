@@ -78,7 +78,7 @@ export function Pagination({
           <IconChevronDown className="pointer-events-none absolute right-1.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
         </div>
         <span className="tabular-nums text-slate-500 dark:text-slate-400">
-          <span className="sr-only">Éléments par page sur un total de </span>/ {meta.total}
+          <span className="sr-only">Éléments par page sur un total de </span>
         </span>
       </div>
 
