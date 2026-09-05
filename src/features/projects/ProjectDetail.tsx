@@ -15,7 +15,7 @@ import {
   PageHeader,
 } from "@/components/ui";
 import type { Column } from "@/components/ui";
-import { IconArrowRight, IconPurchaseOrder } from "@/components/ui/icons";
+import { IconArrowRight, IconCrane, IconPurchaseOrder } from "@/components/ui/icons";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { usePaginatedData } from "@/hooks/usePaginatedData";
 import { PURCHASE_ORDER_STATUS_TONE } from "@/lib/domain-labels";
@@ -90,7 +90,7 @@ export function ProjectDetail({ projectId }: { projectId: number }) {
       <PageHeader
         title={project.name}
         description={`Chantier ${project.code}`}
-        icon={<IconPurchaseOrder className="h-5 w-5" />}
+        icon={<IconCrane className="h-5 w-5" />}
         actions={
           <LinkButton href="/projects" icon={<IconArrowRight className="h-4 w-4 rotate-180" />}>
             Retour à la liste
@@ -100,7 +100,7 @@ export function ProjectDetail({ projectId }: { projectId: number }) {
 
       <div className="flex flex-col gap-5">
         <Card>
-          <CardHeader title="Identité" icon={<IconPurchaseOrder className="h-4 w-4" />} />
+          <CardHeader title="Identité" icon={<IconCrane className="h-4 w-4" />} />
           <CardBody>
             <DescriptionList
               items={[

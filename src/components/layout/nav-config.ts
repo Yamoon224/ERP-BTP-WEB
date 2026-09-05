@@ -1,11 +1,14 @@
 import type { ComponentType } from "react";
 import {
   IconBanknote,
+  IconBuilding,
+  IconCrane,
   IconDashboard,
   IconDelivery,
   IconException,
   IconBilling,
   IconPayment,
+  IconHistory,
   IconPurchaseOrder,
   IconShield,
   IconUsers,
@@ -41,14 +44,14 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Fournisseurs",
     permission: "procurement.view",
     description: "Qui nous facture — le referentiel d'ou part le circuit",
-    icon: IconUsers,
+    icon: IconBuilding,
   },
   {
     href: "/projects",
     label: "Chantiers",
     permission: "procurement.view",
     description: "Les affaires sur lesquelles les achats sont engages",
-    icon: IconPurchaseOrder,
+    icon: IconCrane,
   },
   {
     href: "/purchase-orders",
@@ -104,7 +107,7 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Journal d'audit",
     permission: "audit.view",
     description: "Qui a change quoi, quand — en lecture seule",
-    icon: IconShield,
+    icon: IconHistory,
   },
   {
     href: "/users",

@@ -392,3 +392,45 @@ export function IconKey(props: IconProps) {
     </Icon>
   );
 }
+
+/**
+ * Fournisseur : un batiment d'entreprise. Distinct de `IconUsers`, qui coiffe
+ * les comptes de l'application — barre laterale reduite, l'icone est le seul
+ * repere du lien, et deux entrees qui partagent la meme deviennent
+ * indiscernables.
+ */
+export function IconBuilding(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3.4 20.6h17.2" />
+      <path d="M5.4 20.6V4.4a1 1 0 0 1 1-1h7.2a1 1 0 0 1 1 1v16.2" />
+      <path d="M14.6 9.4h3.6a1 1 0 0 1 1 1v10.2" />
+      <path d="M8.2 7.2h3.4M8.2 11h3.4M8.2 14.8h3.4" />
+    </Icon>
+  );
+}
+
+/** Chantier : une grue de levage. */
+export function IconCrane(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M4.6 20.6h6.4" />
+      <path d="M7.8 20.6V4.6" />
+      <path d="M3 8.2h16.4" />
+      <path d="m7.8 4.6 4.4 3.6" />
+      <path d="M16.6 8.2v3.4" />
+      <path d="M14.4 11.6h4.4v3.2h-4.4z" />
+    </Icon>
+  );
+}
+
+/** Journal d'audit : une horloge a rebours, l'historique des mouvements. */
+export function IconHistory(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3.6 12a8.4 8.4 0 1 0 2.5-6" />
+      <path d="M3.4 3.6v3.8h3.8" />
+      <path d="M12 7.6V12l3 1.8" />
+    </Icon>
+  );
+}

@@ -15,7 +15,12 @@ import {
   PageHeader,
 } from "@/components/ui";
 import type { Column } from "@/components/ui";
-import { IconArrowRight, IconBilling, IconPurchaseOrder, IconUsers } from "@/components/ui/icons";
+import {
+  IconArrowRight,
+  IconBilling,
+  IconBuilding,
+  IconPurchaseOrder,
+} from "@/components/ui/icons";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { usePaginatedData } from "@/hooks/usePaginatedData";
 import { INVOICE_STATUS_TONE, PURCHASE_ORDER_STATUS_TONE } from "@/lib/domain-labels";
@@ -136,7 +141,7 @@ export function SupplierDetail({ supplierId }: { supplierId: number }) {
       <PageHeader
         title={supplier.name}
         description={`Fournisseur ${supplier.code}`}
-        icon={<IconUsers className="h-5 w-5" />}
+        icon={<IconBuilding className="h-5 w-5" />}
         actions={
           <LinkButton href="/suppliers" icon={<IconArrowRight className="h-4 w-4 rotate-180" />}>
             Retour à la liste
@@ -146,7 +151,7 @@ export function SupplierDetail({ supplierId }: { supplierId: number }) {
 
       <div className="flex flex-col gap-5">
         <Card>
-          <CardHeader title="Identité" icon={<IconUsers className="h-4 w-4" />} />
+          <CardHeader title="Identité" icon={<IconBuilding className="h-4 w-4" />} />
           <CardBody>
             <DescriptionList
               items={[
