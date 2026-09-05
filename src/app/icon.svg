@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Favicon : la meme marque que `LogoMark` — un carre au degrade diagonal de
+    marque, portant la facture. L'objet central du produit, reduit a 16 pixels.
+  -->
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="48%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="10" fill="url(#brand)" />
+  <g transform="translate(11.2 11.2) scale(1.7333)" fill="none" stroke="#ffffff"
+     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 2.5h9.2L20 7.2V21l-2.6-1.5-2.6 1.5-2.6-1.5L9.6 21 7 19.5 4 21V6a3.5 3.5 0 0 1 2-3.5Z" />
+    <path d="M14.8 2.6V7.4H19.8" />
+    <path d="M8.4 10.5h7.2M8.4 14.2h4.8" />
+  </g>
+</svg>
