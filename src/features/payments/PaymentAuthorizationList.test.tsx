@@ -4,14 +4,14 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { PaymentAuthorizationList } from "./PaymentAuthorizationList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { PaymentAuthorization, User } from "@/types/api";
 
 function authorization(overrides: Partial<PaymentAuthorization> = {}): PaymentAuthorization {
   return {
-    id: 42,
-    invoice_id: 3,
-    match_run_id: 7,
+    id: testId(42),
+    invoice_id: testId(3),
+    match_run_id: testId(7),
     amount: 5030,
     currency: "EUR",
     base_amount: 5030,
@@ -25,17 +25,17 @@ function authorization(overrides: Partial<PaymentAuthorization> = {}): PaymentAu
     payment_reference: null,
     payment_method: null,
     invoice: {
-      id: 3,
+      id: testId(3),
       reference: "FAC-2026-0003",
       status: "approved",
-      supplier: { id: 1, name: "Béton Express SAS" },
+      supplier: { id: testId(1), name: "Béton Express SAS" },
     },
     ...overrides,
   };
 }
 
 const ACCOUNTANT: User = {
-  id: 6,
+  id: testId(6),
   name: "Julien Bardot",
   email: "comptable@erp.test",
   roles: ["accountant"],
@@ -44,7 +44,7 @@ const ACCOUNTANT: User = {
 
 /** Le controleur voit les paiements mais ne les execute pas. */
 const CONTROLLER: User = {
-  id: 5,
+  id: testId(5),
   name: "Nadia Belkacem",
   email: "controleur@erp.test",
   roles: ["controller"],
@@ -63,7 +63,7 @@ describe("PaymentAuthorizationList", () => {
         body: paginated([
           authorization(),
           authorization({
-            id: 43,
+            id: testId(43),
             is_settled: true,
             settled_at: "2026-09-03T12:00:00+00:00",
             payment_reference: "VIR-2026-00042",
@@ -94,7 +94,7 @@ describe("PaymentAuthorizationList", () => {
     const api = mockApi()
       .on("GET /me", { body: { data: ACCOUNTANT } })
       .on("GET /payment-authorizations", { body: paginated([authorization()]) })
-      .on("POST /payment-authorizations/42/settle", {
+      .on(`POST /payment-authorizations/${testId(42)}/settle`, {
         body: {
           data: authorization({
             is_settled: true,
@@ -130,7 +130,7 @@ describe("PaymentAuthorizationList", () => {
     mockApi()
       .on("GET /me", { body: { data: ACCOUNTANT } })
       .on("GET /payment-authorizations", { body: paginated([authorization()]) })
-      .on("POST /payment-authorizations/42/settle", {
+      .on(`POST /payment-authorizations/${testId(42)}/settle`, {
         status: 409,
         body: {
           message: "Cette autorisation a deja ete reglee le 03/09/2026.",

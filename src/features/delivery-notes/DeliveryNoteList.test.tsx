@@ -4,22 +4,22 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { DeliveryNoteList } from "./DeliveryNoteList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { DeliveryNote, User } from "@/types/api";
 
 function deliveryNote(overrides: Partial<DeliveryNote> = {}): DeliveryNote {
   return {
-    id: 4,
+    id: testId(4),
     reference: "BL-2026-0004",
     status: "draft",
     status_label: "Brouillon",
     counts_as_received: false,
     received_at: "2026-09-01",
     notes: null,
-    purchase_order_id: 2,
-    purchase_order: { id: 2, reference: "PO-2026-0002", status: "open" },
+    purchase_order_id: testId(2),
+    purchase_order: { id: testId(2), reference: "PO-2026-0002", status: "open" },
     supplier: {
-      id: 1,
+      id: testId(1),
       code: "SUP-BETON",
       name: "Béton Express SAS",
       vat_number: null,
@@ -35,7 +35,7 @@ function deliveryNote(overrides: Partial<DeliveryNote> = {}): DeliveryNote {
 }
 
 const WAREHOUSE: User = {
-  id: 3,
+  id: testId(3),
   name: "Sofia Ferreira",
   email: "magasinier@erp.test",
   roles: ["warehouse"],
@@ -43,7 +43,7 @@ const WAREHOUSE: User = {
 };
 
 const BUYER: User = {
-  id: 2,
+  id: testId(2),
   name: "Marc Lemoine",
   email: "acheteur@erp.test",
   roles: ["buyer"],
@@ -109,7 +109,7 @@ describe("DeliveryNoteList", () => {
     const api = mockApi()
       .on("GET /me", { body: { data: WAREHOUSE } })
       .on("GET /delivery-notes", { body: paginated([deliveryNote()]) })
-      .on("POST /delivery-notes/4/review", {
+      .on(`POST /delivery-notes/${testId(4)}/review`, {
         body: {
           data: deliveryNote({ status: "accepted", status_label: "Accepté", counts_as_received: true }),
         },
@@ -136,7 +136,7 @@ describe("DeliveryNoteList", () => {
     mockApi()
       .on("GET /me", { body: { data: WAREHOUSE } })
       .on("GET /delivery-notes", { body: paginated([deliveryNote()]) })
-      .on("POST /delivery-notes/4/review", {
+      .on(`POST /delivery-notes/${testId(4)}/review`, {
         status: 409,
         body: {
           message: "Le bon de livraison BL-2026-0004 est déjà Accepté.",

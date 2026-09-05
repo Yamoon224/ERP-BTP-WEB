@@ -20,8 +20,8 @@ export interface MatchRunListParams {
 /** Filtres du registre global, toutes factures confondues. */
 export interface MatchRunRegistryParams {
   search?: string;
-  invoice_id?: number;
-  supplier_id?: number;
+  invoice_id?: string;
+  supplier_id?: string;
   status?: MatchStatus;
   trigger?: MatchTrigger;
   actor_type?: ActorType;
@@ -37,8 +37,8 @@ export interface ExceptionListParams {
   review_status?: ReviewStatus;
   type?: DiscrepancyType;
   severity?: DiscrepancySeverity;
-  invoice_id?: number;
-  supplier_id?: number;
+  invoice_id?: string;
+  supplier_id?: string;
   page?: number;
   per_page?: number;
 }
@@ -50,7 +50,7 @@ export interface ReviewResult {
 }
 
 export function listRuns(
-  invoiceId: number,
+  invoiceId: string,
   params: MatchRunListParams = {},
 ): Promise<Paginated<MatchRun>> {
   return apiFetch<Paginated<MatchRun>>(`/invoices/${invoiceId}/match-runs`, {
@@ -58,7 +58,7 @@ export function listRuns(
   });
 }
 
-export async function findRun(invoiceId: number, matchRunId: number): Promise<MatchRun> {
+export async function findRun(invoiceId: string, matchRunId: string): Promise<MatchRun> {
   const response = await apiFetch<Single<MatchRun>>(
     `/invoices/${invoiceId}/match-runs/${matchRunId}`,
   );
@@ -67,7 +67,7 @@ export async function findRun(invoiceId: number, matchRunId: number): Promise<Ma
 }
 
 /** Rejoue le rapprochement ; l'utilisateur courant devient l'auteur de la decision. */
-export async function runMatching(invoiceId: number): Promise<MatchRun> {
+export async function runMatching(invoiceId: string): Promise<MatchRun> {
   const response = await apiFetch<Single<MatchRun>>(`/invoices/${invoiceId}/match-runs`, {
     method: "POST",
   });
@@ -89,7 +89,7 @@ export function listAllRuns(
   return apiFetch<Paginated<MatchRun>>("/match-runs", { query: { ...params } });
 }
 
-export async function findRunById(id: number): Promise<MatchRun> {
+export async function findRunById(id: string): Promise<MatchRun> {
   const response = await apiFetch<Single<MatchRun>>(`/match-runs/${id}`);
 
   return response.data;
@@ -99,7 +99,7 @@ export function listExceptions(params: ExceptionListParams = {}): Promise<Pagina
   return apiFetch<Paginated<MatchException>>("/match-exceptions", { query: { ...params } });
 }
 
-export async function findException(id: number): Promise<MatchException> {
+export async function findException(id: string): Promise<MatchException> {
   const response = await apiFetch<Single<MatchException>>(`/match-exceptions/${id}`);
 
   return response.data;
@@ -110,7 +110,7 @@ export async function findException(id: number): Promise<MatchException> {
  * sans justification serait intracable a posteriori.
  */
 export async function reviewException(
-  id: number,
+  id: string,
   decision: Extract<ReviewStatus, "approved" | "rejected">,
   note: string,
 ): Promise<ReviewResult> {

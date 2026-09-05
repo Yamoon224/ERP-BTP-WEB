@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { UserList } from "./UserList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { AdminUser, Role, User } from "@/types/api";
 
 function account(overrides: Partial<AdminUser> = {}): AdminUser {
   return {
-    id: 11,
+    id: testId(11),
     name: "Sofia Ferreira",
     email: "magasinier@erp.test",
     roles: ["warehouse"],
@@ -20,7 +20,7 @@ function account(overrides: Partial<AdminUser> = {}): AdminUser {
 }
 
 const ADMIN: User = {
-  id: 1,
+  id: testId(1),
   name: "Awa Diop",
   email: "admin@erp.test",
   roles: ["admin"],
@@ -29,7 +29,7 @@ const ADMIN: User = {
 
 /** Un compte qui peut consulter les utilisateurs sans pouvoir les modifier. */
 const READER: User = {
-  id: 2,
+  id: testId(2),
   name: "Lecteur",
   email: "lecteur@erp.test",
   roles: ["controller"],
@@ -80,7 +80,7 @@ describe("UserList", () => {
       .on("GET /me", { body: { data: ADMIN } })
       .on("GET /roles", { body: { data: ROLES } })
       .on("GET /users", { body: paginated([account()]) })
-      .on("POST /users", { status: 201, body: { data: account({ id: 99, name: "Nouvelle Recrue" }) } });
+      .on("POST /users", { status: 201, body: { data: account({ id: testId(99), name: "Nouvelle Recrue" }) } });
 
     const user = userEvent.setup();
     renderWithAuth(<UserList />);
@@ -110,7 +110,7 @@ describe("UserList", () => {
       .on("GET /me", { body: { data: ADMIN } })
       .on("GET /roles", { body: { data: ROLES } })
       .on("GET /users", { body: paginated([account()]) })
-      .on("PATCH /users/11", { body: { data: account({ name: "Sofia Ferreira-Nunes" }) } });
+      .on(`PATCH /users/${testId(11)}`, { body: { data: account({ name: "Sofia Ferreira-Nunes" }) } });
 
     const user = userEvent.setup();
     renderWithAuth(<UserList />);
@@ -137,7 +137,7 @@ describe("UserList", () => {
       .on("GET /me", { body: { data: ADMIN } })
       .on("GET /roles", { body: { data: ROLES } })
       .on("GET /users", { body: paginated([account()]) })
-      .on("DELETE /users/11", { status: 204 });
+      .on(`DELETE /users/${testId(11)}`, { status: 204 });
 
     const user = userEvent.setup();
     renderWithAuth(<UserList />);
@@ -161,7 +161,7 @@ describe("UserList", () => {
       .on("GET /me", { body: { data: ADMIN } })
       .on("GET /roles", { body: { data: ROLES } })
       .on("GET /users", { body: paginated([account()]) })
-      .on("DELETE /users/11", {
+      .on(`DELETE /users/${testId(11)}`, {
         status: 409,
         body: {
           message: "Ce compte est le dernier administrateur.",

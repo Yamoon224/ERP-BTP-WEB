@@ -8,8 +8,8 @@ import type {
 } from "@/types/api";
 
 export interface PaymentListParams {
-  invoice_id?: number;
-  supplier_id?: number;
+  invoice_id?: string;
+  supplier_id?: string;
   status?: PaymentAuthorizationStatus;
   /** Absent : tout ; `true` : deja regle ; `false` : reste a regler. */
   settled?: boolean;
@@ -42,7 +42,7 @@ export function listAuthorizations(
  * ecran de devenir un moyen de payer ce que le rapprochement a bloque.
  */
 export async function settle(
-  authorizationId: number,
+  authorizationId: string,
   input: SettlementInput,
 ): Promise<PaymentAuthorization> {
   const response = await apiFetch<Single<PaymentAuthorization>>(

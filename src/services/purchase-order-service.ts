@@ -5,8 +5,8 @@ export interface PurchaseOrderListParams {
   sort?: string;
   direction?: "asc" | "desc";
   search?: string;
-  supplier_id?: number;
-  project_id?: number;
+  supplier_id?: string;
+  project_id?: string;
   status?: PurchaseOrderStatus;
   page?: number;
   per_page?: number;
@@ -22,8 +22,8 @@ export interface PurchaseOrderLineInput {
 
 export interface PurchaseOrderInput {
   reference: string;
-  supplier_id: number;
-  project_id: number;
+  supplier_id: string;
+  project_id: string;
   currency?: string;
   ordered_at: string;
   notes?: string | null;
@@ -34,7 +34,7 @@ export function list(params: PurchaseOrderListParams = {}): Promise<Paginated<Pu
   return apiFetch<Paginated<PurchaseOrder>>("/purchase-orders", { query: { ...params } });
 }
 
-export async function find(id: number): Promise<PurchaseOrder> {
+export async function find(id: string): Promise<PurchaseOrder> {
   const response = await apiFetch<Single<PurchaseOrder>>(`/purchase-orders/${id}`);
 
   return response.data;

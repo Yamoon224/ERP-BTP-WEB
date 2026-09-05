@@ -76,7 +76,7 @@ export function CurrencyView() {
   const { items, meta, setPage, setPerPage, isLoading, error, reload } =
     usePaginatedData<ExchangeRateQuote>(fetcher);
 
-  const deleteAction = useCallback((id: number) => currencyService.removeRate(id), []);
+  const deleteAction = useCallback((id: string) => currencyService.removeRate(id), []);
   const deletion = useMutation(deleteAction);
 
   const canManage = can("currencies.manage");

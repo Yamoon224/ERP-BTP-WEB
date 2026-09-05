@@ -32,7 +32,7 @@ import { InvoiceCurrencyDialog } from "./InvoiceCurrencyDialog";
 import { MatchLineResultsTable } from "./MatchLineResultsTable";
 import { MatchRunSummary } from "./MatchRunSummary";
 
-export function InvoiceDetail({ invoiceId }: { invoiceId: number }) {
+export function InvoiceDetail({ invoiceId }: { invoiceId: string }) {
   const { can } = useAuth();
 
   const loader = useCallback(() => invoiceService.find(invoiceId), [invoiceId]);

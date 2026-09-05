@@ -32,7 +32,7 @@ import type { DeliveryNoteLine } from "@/types/api";
  * brouillon ou refuse laisse la facture correspondante non payable, meme si la
  * marchandise est sur le chantier.
  */
-export function DeliveryNoteDetail({ deliveryNoteId }: { deliveryNoteId: number }) {
+export function DeliveryNoteDetail({ deliveryNoteId }: { deliveryNoteId: string }) {
   const loader = useCallback(() => deliveryNoteService.find(deliveryNoteId), [deliveryNoteId]);
   const { data: note, isLoading, error, reload } = useAsyncData(loader);
 

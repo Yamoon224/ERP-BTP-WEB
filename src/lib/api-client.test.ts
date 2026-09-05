@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError, NetworkError, apiFetch, clearToken, errorMessage, storeToken } from "./api-client";
 import { config } from "./config";
-import { mockApi } from "@/test/api-mock";
+import { mockApi, testId } from "@/test/api-mock";
 
 describe("apiFetch", () => {
   beforeEach(() => {
@@ -35,7 +35,7 @@ describe("apiFetch", () => {
   });
 
   it("sérialise le corps en JSON et pose le bon en-tête", async () => {
-    const api = mockApi().on("POST /invoices", { status: 201, body: { data: { id: 1 } } });
+    const api = mockApi().on("POST /invoices", { status: 201, body: { data: { id: testId(1) } } });
 
     await apiFetch("/invoices", { method: "POST", body: { reference: "FAC-1" } });
 

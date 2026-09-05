@@ -86,3 +86,15 @@ export function paginated<T>(items: T[], overrides: Partial<{ total: number; cur
     },
   };
 }
+
+/**
+ * Identifiant de test, derive d'un petit entier.
+ *
+ * Les cles de l'API sont des UUID : `id: 7` ne compile plus, et un UUID complet
+ * recopie a la main dans quinze fixtures rendrait les tests illisibles — on ne
+ * verrait plus lequel des trois documents est designe. Le numero reste donc
+ * visible au bout de l'identifiant.
+ */
+export function testId(seed: number): string {
+  return `00000000-0000-4000-8000-${String(seed).padStart(12, "0")}`;
+}

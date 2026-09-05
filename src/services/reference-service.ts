@@ -31,7 +31,7 @@ export function listSuppliers(params: ListParams = {}): Promise<Paginated<Suppli
   return apiFetch<Paginated<Supplier>>("/suppliers", { query: { ...params } });
 }
 
-export async function findSupplier(id: number): Promise<Supplier> {
+export async function findSupplier(id: string): Promise<Supplier> {
   const response = await apiFetch<Single<Supplier>>(`/suppliers/${id}`);
 
   return response.data;
@@ -47,7 +47,7 @@ export async function createSupplier(input: SupplierInput): Promise<Supplier> {
 }
 
 export async function updateSupplier(
-  id: number,
+  id: string,
   input: Partial<SupplierInput>,
 ): Promise<Supplier> {
   const response = await apiFetch<Single<Supplier>>(`/suppliers/${id}`, {
@@ -63,7 +63,7 @@ export async function updateSupplier(
  * fiche. Le geste equivalent, dans ce cas, est la desactivation : elle retire
  * le fournisseur des listes de saisie sans amputer la piste d'audit.
  */
-export function removeSupplier(id: number): Promise<void> {
+export function removeSupplier(id: string): Promise<void> {
   return apiFetch<void>(`/suppliers/${id}`, { method: "DELETE" });
 }
 
@@ -73,7 +73,7 @@ export function listProjects(params: ListParams = {}): Promise<Paginated<Project
   return apiFetch<Paginated<Project>>("/projects", { query: { ...params } });
 }
 
-export async function findProject(id: number): Promise<Project> {
+export async function findProject(id: string): Promise<Project> {
   const response = await apiFetch<Single<Project>>(`/projects/${id}`);
 
   return response.data;
@@ -88,7 +88,7 @@ export async function createProject(input: ProjectInput): Promise<Project> {
   return response.data;
 }
 
-export async function updateProject(id: number, input: Partial<ProjectInput>): Promise<Project> {
+export async function updateProject(id: string, input: Partial<ProjectInput>): Promise<Project> {
   const response = await apiFetch<Single<Project>>(`/projects/${id}`, {
     method: "PATCH",
     body: input,
@@ -98,6 +98,6 @@ export async function updateProject(id: number, input: Partial<ProjectInput>): P
 }
 
 /** Refuse (409 `project_in_use`) des qu'un bon de commande porte le chantier. */
-export function removeProject(id: number): Promise<void> {
+export function removeProject(id: string): Promise<void> {
   return apiFetch<void>(`/projects/${id}`, { method: "DELETE" });
 }

@@ -53,12 +53,12 @@ export function InvoiceList() {
     usePaginatedData<Invoice>(fetcher);
 
   const rematchAction = useCallback(
-    (invoiceId: number) => matchingService.runMatching(invoiceId),
+    (invoiceId: string) => matchingService.runMatching(invoiceId),
     [],
   );
   const rematch = useMutation(rematchAction);
 
-  async function handleRematch(invoiceId: number) {
+  async function handleRematch(invoiceId: string) {
     if (await rematch.run(invoiceId)) reload();
   }
 

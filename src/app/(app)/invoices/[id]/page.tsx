@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { InvoiceDetail } from "@/features/invoices/InvoiceDetail";
+import { isUuid } from "@/lib/uuid";
 
 export const metadata = { title: "Détail de la facture - ERP BTP" };
 
@@ -10,11 +11,11 @@ export const metadata = { title: "Détail de la facture - ERP BTP" };
  */
 export default async function InvoiceDetailPage(props: PageProps<"/invoices/[id]">) {
   const { id } = await props.params;
-  const invoiceId = Number(id);
 
-  // Un identifiant non numerique ne peut correspondre a aucune facture :
-  // inutile d'aller le demander a l'API pour s'en rendre compte.
-  if (!Number.isInteger(invoiceId) || invoiceId <= 0) notFound();
+  // Un identifiant qui n'a pas la forme d'un UUID ne peut designer
+  // aucune facture : inutile d'aller le demander a l'API pour s'en
+  // rendre compte.
+  if (!isUuid(id)) notFound();
 
-  return <InvoiceDetail invoiceId={invoiceId} />;
+  return <InvoiceDetail invoiceId={id} />;
 }

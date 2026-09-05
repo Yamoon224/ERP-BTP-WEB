@@ -36,7 +36,7 @@ export function ExceptionReviewDialog({
   const [note, setNote] = useState("");
 
   const action = useCallback(
-    (input: { id: number; decision: Decision; note: string }) =>
+    (input: { id: string; decision: Decision; note: string }) =>
       matchingService.reviewException(input.id, input.decision, input.note),
     [],
   );

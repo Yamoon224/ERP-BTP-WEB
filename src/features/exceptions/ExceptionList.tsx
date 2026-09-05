@@ -34,7 +34,7 @@ const STATUS_OPTIONS: Array<{ value: ReviewStatus | ""; label: string }> = [
  * Par défaut, seuls les écarts ouverts sont affichés : cet écran sert d'abord
  * à traiter ce qui bloque des paiements, l'historique n'est qu'un second usage.
  */
-export function ExceptionList({ invoiceId }: { invoiceId?: number } = {}) {
+export function ExceptionList({ invoiceId }: { invoiceId?: string } = {}) {
   const { can } = useAuth();
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus | "">("open");
   const [search, setSearch] = useState("");

@@ -81,7 +81,7 @@ export function ProjectList() {
   const { items, meta, setPage, setPerPage, isLoading, error, reload } =
     usePaginatedData<Project>(fetcher);
 
-  const deleteAction = useCallback((id: number) => referenceService.removeProject(id), []);
+  const deleteAction = useCallback((id: string) => referenceService.removeProject(id), []);
   const deletion = useMutation(deleteAction);
 
   const canManage = can("procurement.manage");

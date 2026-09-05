@@ -1,13 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { testId } from "@/test/api-mock";
 import { MatchRunSummary } from "./MatchRunSummary";
 import type { MatchRun } from "@/types/api";
 import { normaliseSpaces } from "@/test/intl";
 
 function matchRun(overrides: Partial<MatchRun> = {}): MatchRun {
   return {
-    id: 12,
-    invoice_id: 5,
+    id: testId(12),
+    invoice_id: testId(5),
     status: "matched",
     status_label: "Rapproché",
     decided_by: { actor_type: "system", actor_id: null, label: "Moteur de rapprochement v1.0.0" },
@@ -49,7 +50,7 @@ describe("MatchRunSummary", () => {
     render(
       <MatchRunSummary
         run={matchRun({
-          decided_by: { actor_type: "user", actor_id: 5, label: "Nadia Belkacem" },
+          decided_by: { actor_type: "user", actor_id: testId(5), label: "Nadia Belkacem" },
           trigger: "exception_reviewed",
         })}
         currency="EUR"

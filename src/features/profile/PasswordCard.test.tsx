@@ -4,11 +4,11 @@ import { describe, expect, it } from "vitest";
 import { PasswordCard } from "./PasswordCard";
 import { ProfileIdentityCard } from "./ProfileIdentityCard";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi } from "@/test/api-mock";
+import { mockApi, testId } from "@/test/api-mock";
 import type { User } from "@/types/api";
 
 const CURRENT: User = {
-  id: 6,
+  id: testId(6),
   name: "Julien Bardot",
   email: "comptable@erp.test",
   roles: ["accountant"],

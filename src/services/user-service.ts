@@ -33,7 +33,7 @@ export function list(params: UserListParams = {}): Promise<Paginated<AdminUser>>
   return apiFetch<Paginated<AdminUser>>("/users", { query: { ...params } });
 }
 
-export async function find(id: number): Promise<AdminUser> {
+export async function find(id: string): Promise<AdminUser> {
   const response = await apiFetch<Single<AdminUser>>(`/users/${id}`);
 
   return response.data;
@@ -45,7 +45,7 @@ export async function create(input: UserInput): Promise<AdminUser> {
   return response.data;
 }
 
-export async function update(id: number, input: Partial<UserInput>): Promise<AdminUser> {
+export async function update(id: string, input: Partial<UserInput>): Promise<AdminUser> {
   const response = await apiFetch<Single<AdminUser>>(`/users/${id}`, {
     method: "PATCH",
     body: input,
@@ -59,7 +59,7 @@ export async function update(id: number, input: Partial<UserInput>): Promise<Adm
  * dernier administrateur : l'interface relaie le message plutot que de
  * dupliquer la regle.
  */
-export function remove(id: number): Promise<void> {
+export function remove(id: string): Promise<void> {
   return apiFetch<void>(`/users/${id}`, { method: "DELETE" });
 }
 

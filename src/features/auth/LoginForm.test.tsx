@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LoginForm } from "./LoginForm";
 import { AuthProvider } from "./AuthContext";
 import { config } from "@/lib/config";
-import { mockApi } from "@/test/api-mock";
+import { mockApi, testId } from "@/test/api-mock";
 
 const replace = vi.fn();
 
@@ -13,7 +13,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 const USER = {
-  id: 5,
+  id: testId(5),
   name: "Nadia Belkacem",
   email: "controleur@erp.test",
   roles: ["controller"],
@@ -37,7 +37,7 @@ describe("LoginForm", () => {
       </AuthProvider>,
     );
 
-    await user.type(screen.getByLabelText(/Adresse e-mail/), "controleur@erp.test");
+    await user.type(screen.getByLabelText(/Email/), "controleur@erp.test");
     await user.type(screen.getByLabelText(/Mot de passe/), "password");
     await user.click(screen.getByRole("button", { name: "Se connecter" }));
 
@@ -74,7 +74,7 @@ describe("LoginForm", () => {
       </AuthProvider>,
     );
 
-    await user.type(screen.getByLabelText(/Adresse e-mail/), "inconnu@erp.test");
+    await user.type(screen.getByLabelText(/Email/), "inconnu@erp.test");
     await user.type(screen.getByLabelText(/Mot de passe/), "mauvais");
     await user.click(screen.getByRole("button", { name: "Se connecter" }));
 
@@ -93,7 +93,7 @@ describe("LoginForm", () => {
       </AuthProvider>,
     );
 
-    await user.type(screen.getByLabelText(/Adresse e-mail/), "a@b.test");
+    await user.type(screen.getByLabelText(/Email/), "a@b.test");
     await user.type(screen.getByLabelText(/Mot de passe/), "password");
     await user.click(screen.getByRole("button", { name: "Se connecter" }));
 

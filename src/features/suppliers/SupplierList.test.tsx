@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { SupplierList } from "./SupplierList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { Supplier, User } from "@/types/api";
 
 function supplier(overrides: Partial<Supplier> = {}): Supplier {
   return {
-    id: 7,
+    id: testId(7),
     code: "SUP-BETON",
     name: "Béton Express SAS",
     vat_number: "FR12345678901",
@@ -21,7 +21,7 @@ function supplier(overrides: Partial<Supplier> = {}): Supplier {
 }
 
 const BUYER: User = {
-  id: 1,
+  id: testId(1),
   name: "Marc Lemoine",
   email: "acheteur@erp.test",
   roles: ["buyer"],
@@ -30,7 +30,7 @@ const BUYER: User = {
 
 /** Un compte qui consulte le referentiel sans pouvoir le modifier. */
 const READER: User = {
-  id: 2,
+  id: testId(2),
   name: "Sofia Ferreira",
   email: "magasinier@erp.test",
   roles: ["warehouse"],
@@ -45,7 +45,7 @@ describe("SupplierList", () => {
   it("affiche les fiches et leur état", async () => {
     mockApi()
       .on("GET /me", { body: { data: BUYER } })
-      .on("GET /suppliers", { body: paginated([supplier(), supplier({ id: 8, code: "SUP-OLD", name: "Ancien Fournisseur", is_active: false })]) });
+      .on("GET /suppliers", { body: paginated([supplier(), supplier({ id: testId(8), code: "SUP-OLD", name: "Ancien Fournisseur", is_active: false })]) });
 
     renderWithAuth(<SupplierList />);
 
@@ -102,7 +102,7 @@ describe("SupplierList", () => {
     mockApi()
       .on("GET /me", { body: { data: BUYER } })
       .on("GET /suppliers", { body: paginated([supplier()]) })
-      .on("DELETE /suppliers/7", {
+      .on(`DELETE /suppliers/${testId(7)}`, {
         status: 409,
         body: {
           message:

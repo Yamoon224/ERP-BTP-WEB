@@ -100,7 +100,7 @@ export type PaymentAuthorizationStatus = "active" | "superseded" | "revoked";
 // --- Référentiel -----------------------------------------------------------
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   roles: string[];
@@ -119,7 +119,7 @@ export interface Role {
 }
 
 export interface Supplier {
-  id: number;
+  id: string;
   code: string;
   name: string;
   vat_number: string | null;
@@ -129,7 +129,7 @@ export interface Supplier {
 }
 
 export interface Project {
-  id: number;
+  id: string;
   code: string;
   name: string;
   client_name: string | null;
@@ -140,7 +140,7 @@ export interface Project {
 // --- Achats ----------------------------------------------------------------
 
 export interface PurchaseOrderLine {
-  id: number;
+  id: string;
   line_number: number;
   item_code: string;
   description: string;
@@ -151,7 +151,7 @@ export interface PurchaseOrderLine {
 }
 
 export interface PurchaseOrder {
-  id: number;
+  id: string;
   reference: string;
   status: PurchaseOrderStatus;
   status_label: string;
@@ -171,11 +171,11 @@ export interface PurchaseOrder {
 // --- Réceptions ------------------------------------------------------------
 
 export interface DeliveryNoteLine {
-  id: number;
-  purchase_order_line_id: number;
+  id: string;
+  purchase_order_line_id: string;
   quantity_received: number;
   purchase_order_line?: {
-    id: number;
+    id: string;
     line_number: number;
     item_code: string;
     description: string;
@@ -185,15 +185,15 @@ export interface DeliveryNoteLine {
 }
 
 export interface DeliveryNote {
-  id: number;
+  id: string;
   reference: string;
   status: DeliveryNoteStatus;
   status_label: string;
   counts_as_received: boolean;
   received_at: string;
   notes: string | null;
-  purchase_order_id: number;
-  purchase_order?: { id: number; reference: string; status: PurchaseOrderStatus };
+  purchase_order_id: string;
+  purchase_order?: { id: string; reference: string; status: PurchaseOrderStatus };
   supplier?: Supplier;
   lines?: DeliveryNoteLine[];
   lines_count?: number;
@@ -208,7 +208,7 @@ export interface DeliveryNote {
  * données cette décision a-t-elle été prise ».
  */
 export interface MatchEvidence {
-  purchase_order_line_id?: number;
+  purchase_order_line_id?: string;
   purchase_order_line_number?: number;
   item_code?: string;
   quantity_ordered?: number;
@@ -238,9 +238,9 @@ export interface MatchEvidence {
 }
 
 export interface MatchLineResult {
-  id: number;
-  invoice_line_id: number;
-  purchase_order_line_id: number | null;
+  id: string;
+  invoice_line_id: string;
+  purchase_order_line_id: string | null;
   status: MatchStatus;
   status_label: string;
   quantity_invoiced: number;
@@ -251,7 +251,7 @@ export interface MatchLineResult {
   price_variance_ratio: number | null;
   matched_amount: number;
   evidence: MatchEvidence;
-  invoice_line?: { id: number; line_number: number; description: string };
+  invoice_line?: { id: string; line_number: number; description: string };
 }
 
 export interface ToleranceSnapshot {
@@ -273,13 +273,13 @@ export type MatchTrigger =
   | "currency_changed";
 
 export interface MatchRun {
-  id: number;
-  invoice_id: number;
+  id: string;
+  invoice_id: string;
   status: MatchStatus;
   status_label: string;
   decided_by: {
     actor_type: ActorType;
-    actor_id: number | null;
+    actor_id: string | null;
     label: string;
   };
   trigger: MatchTrigger;
@@ -299,11 +299,11 @@ export interface MatchRun {
   exception_count: number;
   /** Contexte facture, servi par le registre global des rapprochements. */
   invoice?: {
-    id: number;
+    id: string;
     reference: string;
     status: InvoiceStatus;
     currency: Currency;
-    supplier: { id: number; name: string } | null;
+    supplier: { id: string; name: string } | null;
   };
   line_results?: MatchLineResult[];
   exceptions?: MatchException[];
@@ -313,10 +313,10 @@ export interface MatchRun {
 }
 
 export interface MatchException {
-  id: number;
-  match_run_id: number;
-  invoice_id: number;
-  invoice_line_id: number | null;
+  id: string;
+  match_run_id: string;
+  invoice_id: string;
+  invoice_line_id: string | null;
   type: DiscrepancyType;
   type_label: string;
   severity: DiscrepancySeverity;
@@ -327,12 +327,12 @@ export interface MatchException {
   review_status_label: string;
   review_note: string | null;
   reviewed_at: string | null;
-  reviewed_by?: { id: number; name: string } | null;
+  reviewed_by?: { id: string; name: string } | null;
   invoice?: {
-    id: number;
+    id: string;
     reference: string;
     status: InvoiceStatus;
-    supplier: { id: number; name: string } | null;
+    supplier: { id: string; name: string } | null;
   };
   created_at: string | null;
 }
@@ -340,15 +340,15 @@ export interface MatchException {
 // --- Factures et paiements -------------------------------------------------
 
 export interface InvoiceLine {
-  id: number;
+  id: string;
   line_number: number;
   description: string;
   quantity: number;
   unit_price: number;
   invoiced_amount: number;
-  purchase_order_line_id: number | null;
+  purchase_order_line_id: string | null;
   purchase_order_line?: {
-    id: number;
+    id: string;
     line_number: number;
     item_code: string;
     unit: string;
@@ -360,9 +360,9 @@ export interface InvoiceLine {
 export type PaymentMethod = "transfer" | "check" | "card" | "cash" | "direct_debit";
 
 export interface PaymentAuthorization {
-  id: number;
-  invoice_id: number;
-  match_run_id: number;
+  id: string;
+  invoice_id: string;
+  match_run_id: string;
   amount: number;
   currency: Currency;
   base_amount: number;
@@ -379,17 +379,17 @@ export interface PaymentAuthorization {
   settled_at: string | null;
   payment_reference: string | null;
   payment_method: PaymentMethod | null;
-  settled_by?: { id: number; name: string } | null;
+  settled_by?: { id: string; name: string } | null;
   invoice?: {
-    id: number;
+    id: string;
     reference: string;
     status: InvoiceStatus;
-    supplier: { id: number; name: string } | null;
+    supplier: { id: string; name: string } | null;
   };
 }
 
 export interface Invoice {
-  id: number;
+  id: string;
   reference: string;
   status: InvoiceStatus;
   status_label: string;
@@ -398,13 +398,13 @@ export interface Invoice {
   due_date: string | null;
   total_amount: number;
   supplier?: Supplier;
-  purchase_order_id: number;
+  purchase_order_id: string;
   purchase_order?: {
-    id: number;
+    id: string;
     reference: string;
     status: PurchaseOrderStatus;
     currency: Currency;
-    project: { id: number; code: string; name: string } | null;
+    project: { id: string; code: string; name: string } | null;
   };
   lines?: InvoiceLine[];
   lines_count?: number;
@@ -441,7 +441,7 @@ export interface DashboardSummary {
  * pas le même rôle : celui-ci s'administre, l'autre s'audite.
  */
 export interface ExchangeRateQuote {
-  id: number;
+  id: string;
   base_currency: Currency;
   quote_currency: Currency;
   /** Multiplicateur : montant_en_quote = montant_en_base × rate. */
@@ -478,7 +478,7 @@ export interface CurrencyReference {
 // --- Journal d'audit --------------------------------------------------------
 
 export interface AuditLog {
-  id: number;
+  id: string;
   log_name: string | null;
   description: string;
   event: string | null;
@@ -486,8 +486,8 @@ export interface AuditLog {
   subject_type: string | null;
   /** Libellé métier du type d'objet — « Facture » plutôt que `App\Models\Invoice`. */
   subject_label: string;
-  subject_id: number | null;
-  causer: { id: number; name: string } | null;
+  subject_id: string | null;
+  causer: { id: string; name: string } | null;
   /** Nom de l'auteur, ou « Systeme » quand la décision vient du moteur. */
   causer_label: string;
   /** État avant (`old`) et après (`attributes`) le changement. */

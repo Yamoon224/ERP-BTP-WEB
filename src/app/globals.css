@@ -304,6 +304,28 @@ body {
     box-shadow: inset 0 0 0 1px var(--field-border-focus);
   }
 
+  /*
+   * Champ dont la valeur retenue n'est pas dans `value` mais affichee comme
+   * placeholder : le selecteur de ressource, ou l'on tape pour chercher et ou
+   * le choix courant doit rester lisible sans rien effacer. `:placeholder-shown`
+   * y est toujours vrai — sans cette classe, le libelle resterait couche sur le
+   * nom du fournisseur choisi, et le champ ne s'alignerait pas sur ses voisins.
+   */
+  .field-control--filled::placeholder {
+    color: var(--foreground);
+    font-weight: 500;
+  }
+
+  .field-control--filled ~ .field-outline > legend {
+    max-width: 100%;
+  }
+
+  .field-control--filled ~ .field-label {
+    top: -0.4rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
+
   /* --- Erreur et desactivation --------------------------------------------- */
 
   .field-control[aria-invalid="true"] ~ .field-outline {

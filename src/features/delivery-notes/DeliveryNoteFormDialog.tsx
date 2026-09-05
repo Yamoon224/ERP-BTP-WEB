@@ -55,7 +55,7 @@ export function DeliveryNoteFormDialog({
   // Seules les quantites *corrigees* sont memorisees ; les autres se lisent sur
   // le bon de commande au moment de l'affichage. Rien n'est donc recopie dans
   // un etat local, et il n'y a rien a resynchroniser quand le bon change.
-  const [quantities, setQuantities] = useState<Record<number, string>>({});
+  const [quantities, setQuantities] = useState<Record<string, string>>({});
 
   const action = useCallback((input: DeliveryNoteInput) => deliveryNoteService.create(input), []);
   const { run, isPending, error, fieldErrors, reset } = useMutation(action);

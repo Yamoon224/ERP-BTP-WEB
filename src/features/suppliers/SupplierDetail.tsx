@@ -36,7 +36,7 @@ import type { Invoice, PurchaseOrder } from "@/types/api";
  * paginees separement — on consulte une fiche pour repondre a « ou en est-on
  * avec eux », pas pour lire un code TVA.
  */
-export function SupplierDetail({ supplierId }: { supplierId: number }) {
+export function SupplierDetail({ supplierId }: { supplierId: string }) {
   const loadSupplier = useCallback(
     () => referenceService.findSupplier(supplierId),
     [supplierId],

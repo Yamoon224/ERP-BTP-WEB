@@ -47,7 +47,7 @@ export function listRates(
   return apiFetch<Paginated<ExchangeRateQuote>>("/exchange-rates", { query: { ...params } });
 }
 
-export async function findRate(id: number): Promise<ExchangeRateQuote> {
+export async function findRate(id: string): Promise<ExchangeRateQuote> {
   const response = await apiFetch<Single<ExchangeRateQuote>>(`/exchange-rates/${id}`);
 
   return response.data;
@@ -64,7 +64,7 @@ export async function createRate(input: ExchangeRateInput): Promise<ExchangeRate
 
 /** La paire n'est pas modifiable : seule la cotation l'est. */
 export async function updateRate(
-  id: number,
+  id: string,
   input: Partial<Omit<ExchangeRateInput, "base_currency" | "quote_currency">>,
 ): Promise<ExchangeRateQuote> {
   const response = await apiFetch<Single<ExchangeRateQuote>>(`/exchange-rates/${id}`, {
@@ -75,6 +75,6 @@ export async function updateRate(
   return response.data;
 }
 
-export function removeRate(id: number): Promise<void> {
+export function removeRate(id: string): Promise<void> {
   return apiFetch<void>(`/exchange-rates/${id}`, { method: "DELETE" });
 }

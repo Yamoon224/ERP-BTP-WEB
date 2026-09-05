@@ -56,7 +56,7 @@ export function SupplierList() {
   const { items, meta, setPage, setPerPage, isLoading, error, reload } =
     usePaginatedData<Supplier>(fetcher);
 
-  const deleteAction = useCallback((id: number) => referenceService.removeSupplier(id), []);
+  const deleteAction = useCallback((id: string) => referenceService.removeSupplier(id), []);
   const deletion = useMutation(deleteAction);
 
   const canManage = can("procurement.manage");

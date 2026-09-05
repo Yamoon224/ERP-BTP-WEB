@@ -2,11 +2,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { DeliveryNoteFormDialog } from "./DeliveryNoteFormDialog";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { PurchaseOrder } from "@/types/api";
 
 const ORDER: PurchaseOrder = {
-  id: 4,
+  id: testId(4),
   reference: "PO-2026-0004",
   status: "open",
   status_label: "Ouvert",
@@ -14,7 +14,7 @@ const ORDER: PurchaseOrder = {
   ordered_at: "2026-08-01",
   notes: null,
   supplier: {
-    id: 1,
+    id: testId(1),
     code: "SUP-BETON",
     name: "Béton Express SAS",
     vat_number: null,
@@ -24,7 +24,7 @@ const ORDER: PurchaseOrder = {
   },
   lines: [
     {
-      id: 40,
+      id: testId(40),
       line_number: 1,
       item_code: "CIM-42",
       description: "Ciment CEM II 42,5",
@@ -34,7 +34,7 @@ const ORDER: PurchaseOrder = {
       ordered_amount: 3560,
     },
     {
-      id: 41,
+      id: testId(41),
       line_number: 2,
       item_code: "SAB-01",
       description: "Sable 0/4 lavé",
@@ -50,7 +50,7 @@ const ORDER: PurchaseOrder = {
 function mockOrders() {
   return mockApi()
     .on("GET /purchase-orders", { body: paginated([ORDER]) })
-    .on("GET /purchase-orders/4", { body: { data: ORDER } });
+    .on(`GET /purchase-orders/${testId(4)}`, { body: { data: ORDER } });
 }
 
 async function chooseOrder(user: ReturnType<typeof userEvent.setup>) {
@@ -76,7 +76,7 @@ describe("DeliveryNoteFormDialog", () => {
   it("n'envoie pas les lignes laissées à zéro", async () => {
     const api = mockOrders().on("POST /delivery-notes", {
       status: 201,
-      body: { data: { id: 8, reference: "BL-2026-0008" } },
+      body: { data: { id: testId(8), reference: "BL-2026-0008" } },
     });
 
     const user = userEvent.setup();
@@ -101,7 +101,7 @@ describe("DeliveryNoteFormDialog", () => {
         (call) => call.method === "POST" && call.path === "/delivery-notes",
       );
       const body = posted?.body as { lines: Array<Record<string, unknown>> };
-      expect(body.lines).toEqual([{ purchase_order_line_id: 40, quantity_received: 250 }]);
+      expect(body.lines).toEqual([{ purchase_order_line_id: testId(40), quantity_received: 250 }]);
       // Le fournisseur vient du bon de commande, jamais du formulaire.
       expect(body).not.toHaveProperty("supplier_id");
     });

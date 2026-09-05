@@ -66,9 +66,9 @@ export function InvoiceFormDialog({
   // Comme pour la reception : seules les valeurs *corrigees* sont memorisees.
   // Le reste se lit sur le bon de commande a l'affichage, ce qui evite d'avoir
   // a resynchroniser un etat local quand le bon change.
-  const [quantities, setQuantities] = useState<Record<number, string>>({});
-  const [prices, setPrices] = useState<Record<number, string>>({});
-  const [excluded, setExcluded] = useState<Record<number, true>>({});
+  const [quantities, setQuantities] = useState<Record<string, string>>({});
+  const [prices, setPrices] = useState<Record<string, string>>({});
+  const [excluded, setExcluded] = useState<Record<string, true>>({});
   const [currencyOverride, setCurrencyOverride] = useState<string | null>(null);
 
   const action = useCallback((input: InvoiceInput) => invoiceService.submit(input), []);
@@ -217,7 +217,16 @@ export function InvoiceFormDialog({
       }
     >
       <form id="invoice-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {/*
+          Grille a deux colonnes, chaque champ occupant une cellule entiere et
+          alignant sa ligne de saisie sur celle de sa voisine. Les deux
+          selecteurs de ressource portent desormais la meme coquille que les
+          champs texte (libelle flottant, meme hauteur) : c'est ce qui empeche
+          les lignes de se decaler des qu'un champ porte une aide et pas
+          l'autre. L'ecart vertical est plus large que l'horizontal, pour que
+          l'aide d'un champ ne se lise pas comme celle du suivant.
+        */}
+        <div className="grid grid-cols-1 items-start gap-x-4 gap-y-5 sm:grid-cols-2">
           <TextField
             label="Référence fournisseur"
             required
@@ -238,7 +247,10 @@ export function InvoiceFormDialog({
             emptyLabel="Aucun fournisseur actif ne correspond"
           />
 
+          {/* Pleine largeur : c'est le champ qui commande tout le reste du
+              formulaire, et ses references sont longues. */}
           <ResourceSelect
+            className="sm:col-span-2"
             label="Bon de commande"
             required
             placeholder="Rechercher une référence de commande…"
@@ -273,6 +285,7 @@ export function InvoiceFormDialog({
           />
 
           <SelectField
+            fieldClassName="sm:col-span-2"
             label="Devise de facturation"
             value={currency}
             errors={fieldErrors.currency}

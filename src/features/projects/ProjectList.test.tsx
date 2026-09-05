@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { ProjectList } from "./ProjectList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { Project, User } from "@/types/api";
 
 function project(overrides: Partial<Project> = {}): Project {
   return {
-    id: 3,
+    id: testId(3),
     code: "CH-A12",
     name: "Chantier A12 — Viaduc Nord",
     client_name: "Conseil Départemental",
@@ -20,7 +20,7 @@ function project(overrides: Partial<Project> = {}): Project {
 }
 
 const BUYER: User = {
-  id: 1,
+  id: testId(1),
   name: "Marc Lemoine",
   email: "acheteur@erp.test",
   roles: ["buyer"],

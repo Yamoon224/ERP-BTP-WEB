@@ -29,7 +29,7 @@ import type { PurchaseOrder } from "@/types/api";
  * Un chantier n'existe, dans ce produit, que par ce qu'on y a engage : la
  * liste des bons de commande est donc la moitie utile de l'ecran.
  */
-export function ProjectDetail({ projectId }: { projectId: number }) {
+export function ProjectDetail({ projectId }: { projectId: string }) {
   const loadProject = useCallback(() => referenceService.findProject(projectId), [projectId]);
   const { data: project, isLoading, error, reload } = useAsyncData(loadProject);
 

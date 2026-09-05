@@ -3,12 +3,12 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { MatchRunList } from "./MatchRunList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { MatchRun, User } from "@/types/api";
 
 const RUN: MatchRun = {
-  id: 42,
-  invoice_id: 9,
+  id: testId(42),
+  invoice_id: testId(9),
   status: "partially_matched",
   status_label: "Partiellement rapproché",
   decided_by: { actor_type: "system", actor_id: null, label: "Moteur de rapprochement" },
@@ -32,17 +32,17 @@ const RUN: MatchRun = {
   base_unmatched_amount: 400000,
   exception_count: 2,
   invoice: {
-    id: 9,
+    id: testId(9),
     reference: "FAC-2026-0009",
     status: "partially_approved",
     currency: "XOF",
-    supplier: { id: 3, name: "Béton Express SAS" },
+    supplier: { id: testId(3), name: "Béton Express SAS" },
   },
   created_at: null,
 };
 
 const CONTROLLER: User = {
-  id: 1,
+  id: testId(1),
   name: "Nadia Belkacem",
   email: "controleur@erp.test",
   roles: ["controller"],

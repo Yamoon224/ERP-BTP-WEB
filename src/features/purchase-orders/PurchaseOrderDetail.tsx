@@ -40,7 +40,7 @@ import type { DeliveryNote, Invoice, PurchaseOrderLine } from "@/types/api";
  * ete reclame (les factures). C'est le seul endroit ou les trois apparaissent
  * ensemble pour un meme engagement.
  */
-export function PurchaseOrderDetail({ purchaseOrderId }: { purchaseOrderId: number }) {
+export function PurchaseOrderDetail({ purchaseOrderId }: { purchaseOrderId: string }) {
   const loader = useCallback(
     () => purchaseOrderService.find(purchaseOrderId),
     [purchaseOrderId],

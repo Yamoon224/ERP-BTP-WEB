@@ -5,8 +5,8 @@ export interface AuditListParams {
   search?: string;
   event?: string;
   subject_type?: string;
-  subject_id?: number;
-  causer_id?: number;
+  subject_id?: string;
+  causer_id?: string;
   from?: string;
   to?: string;
   page?: number;
@@ -26,7 +26,7 @@ export function list(params: AuditListParams = {}): Promise<Paginated<AuditLog>>
   return apiFetch<Paginated<AuditLog>>("/audit-logs", { query: { ...params } });
 }
 
-export async function find(id: number): Promise<AuditLog> {
+export async function find(id: string): Promise<AuditLog> {
   const response = await apiFetch<Single<AuditLog>>(`/audit-logs/${id}`);
 
   return response.data;

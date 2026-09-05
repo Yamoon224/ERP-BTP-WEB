@@ -36,7 +36,7 @@ import { matchingService } from "@/services";
  * livraisons ou la configuration changent ensuite. C'est precisement ce qui
  * rend la decision rejouable et contestable des annees plus tard.
  */
-export function MatchRunDetail({ matchRunId }: { matchRunId: number }) {
+export function MatchRunDetail({ matchRunId }: { matchRunId: string }) {
   const loader = useCallback(() => matchingService.findRunById(matchRunId), [matchRunId]);
   const { data: run, isLoading, error, reload } = useAsyncData(loader);
 

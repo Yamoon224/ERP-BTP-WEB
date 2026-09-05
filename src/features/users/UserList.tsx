@@ -54,7 +54,7 @@ export function UserList() {
   const { items, meta, setPage, setPerPage, isLoading, error, reload } =
     usePaginatedData<AdminUser>(fetcher);
 
-  const deleteAction = useCallback((id: number) => userService.remove(id), []);
+  const deleteAction = useCallback((id: string) => userService.remove(id), []);
   const deletion = useMutation(deleteAction);
 
   const canManage = can("users.manage");

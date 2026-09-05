@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { InvoiceList } from "./InvoiceList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { Invoice, User } from "@/types/api";
 
 function invoice(overrides: Partial<Invoice> = {}): Invoice {
   return {
-    id: 1,
+    id: testId(1),
     reference: "FAC-2026-0001",
     status: "approved",
     status_label: "Approuvée",
@@ -18,7 +18,7 @@ function invoice(overrides: Partial<Invoice> = {}): Invoice {
     due_date: "2026-09-30",
     total_amount: 5030,
     supplier: {
-      id: 1,
+      id: testId(1),
       code: "SUP-BETON",
       name: "Béton Express SAS",
       vat_number: null,
@@ -26,7 +26,7 @@ function invoice(overrides: Partial<Invoice> = {}): Invoice {
       is_active: true,
       created_at: null,
     },
-    purchase_order_id: 1,
+    purchase_order_id: testId(1),
     latest_match_run: null,
     created_at: null,
     ...overrides,
@@ -34,7 +34,7 @@ function invoice(overrides: Partial<Invoice> = {}): Invoice {
 }
 
 const ACCOUNTANT: User = {
-  id: 6,
+  id: testId(6),
   name: "Julien Bardot",
   email: "comptable@erp.test",
   roles: ["accountant"],
@@ -59,7 +59,7 @@ describe("InvoiceList", () => {
     mockApi().on("GET /me", { body: { data: ACCOUNTANT } }).on("GET /invoices", {
       body: paginated([
         invoice(),
-        invoice({ id: 2, reference: "FAC-2026-0002", status: "under_review", status_label: "En revue" }),
+        invoice({ id: testId(2), reference: "FAC-2026-0002", status: "under_review", status_label: "En revue" }),
       ]),
     });
 
@@ -107,8 +107,8 @@ describe("InvoiceList", () => {
           status: "partially_approved",
           status_label: "Partiellement approuvée",
           latest_match_run: {
-            id: 9,
-            invoice_id: 1,
+            id: testId(9),
+            invoice_id: testId(1),
             status: "partially_matched",
             status_label: "Partiellement rapproché",
             decided_by: { actor_type: "system", actor_id: null, label: "Moteur" },

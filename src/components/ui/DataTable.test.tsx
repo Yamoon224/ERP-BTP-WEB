@@ -1,18 +1,19 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { testId } from "@/test/api-mock";
 import { DataTable } from "./DataTable";
 import type { Column, SortState } from "./DataTable";
 
 interface Row {
-  id: number;
+  id: string;
   reference: string;
   amount: number;
 }
 
 const ROWS: Row[] = [
-  { id: 1, reference: "FAC-0001", amount: 120 },
-  { id: 2, reference: "FAC-0002", amount: 80 },
+  { id: testId(1), reference: "FAC-0001", amount: 120 },
+  { id: testId(2), reference: "FAC-0002", amount: 80 },
 ];
 
 const COLUMNS: Array<Column<Row>> = [

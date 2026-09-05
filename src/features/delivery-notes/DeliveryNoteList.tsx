@@ -56,13 +56,13 @@ export function DeliveryNoteList() {
     usePaginatedData<DeliveryNote>(fetcher);
 
   const reviewAction = useCallback(
-    (input: { id: number; decision: "accepted" | "rejected" }) =>
+    (input: { id: string; decision: "accepted" | "rejected" }) =>
       deliveryNoteService.review(input.id, input.decision),
     [],
   );
   const review = useMutation(reviewAction);
 
-  async function handleReview(id: number, decision: "accepted" | "rejected") {
+  async function handleReview(id: string, decision: "accepted" | "rejected") {
     // L'erreur n'est pas recopiee dans un etat local : `useMutation` la porte
     // deja, et la lire ici donnerait la valeur du rendu precedent.
     if (await review.run({ id, decision })) reload();

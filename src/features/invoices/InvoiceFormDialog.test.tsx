@@ -2,12 +2,12 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { InvoiceFormDialog } from "./InvoiceFormDialog";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import { normaliseSpaces } from "@/test/intl";
 import type { PurchaseOrder } from "@/types/api";
 
 const ORDER: PurchaseOrder = {
-  id: 4,
+  id: testId(4),
   reference: "PO-2026-0004",
   status: "open",
   status_label: "Ouvert",
@@ -15,7 +15,7 @@ const ORDER: PurchaseOrder = {
   ordered_at: "2026-08-01",
   notes: null,
   supplier: {
-    id: 1,
+    id: testId(1),
     code: "SUP-BETON",
     name: "Béton Express SAS",
     vat_number: null,
@@ -25,7 +25,7 @@ const ORDER: PurchaseOrder = {
   },
   lines: [
     {
-      id: 40,
+      id: testId(40),
       line_number: 1,
       item_code: "CIM-42",
       description: "Ciment CEM II 42,5",
@@ -35,7 +35,7 @@ const ORDER: PurchaseOrder = {
       ordered_amount: 3560,
     },
     {
-      id: 41,
+      id: testId(41),
       line_number: 2,
       item_code: "SAB-01",
       description: "Sable 0/4 lavé",
@@ -51,7 +51,7 @@ const ORDER: PurchaseOrder = {
 /** Le PO clos ne doit pas etre propose : le backend refuserait le document. */
 const CLOSED_ORDER: PurchaseOrder = {
   ...ORDER,
-  id: 5,
+  id: testId(5),
   reference: "PO-2026-0005",
   status: "closed",
   status_label: "Clôturé",
@@ -61,7 +61,7 @@ function mockOrders() {
   return mockApi()
     .on("GET /suppliers", { body: paginated([ORDER.supplier!]) })
     .on("GET /purchase-orders", { body: paginated([ORDER, CLOSED_ORDER]) })
-    .on("GET /purchase-orders/4", { body: { data: ORDER } });
+    .on(`GET /purchase-orders/${testId(4)}`, { body: { data: ORDER } });
 }
 
 async function chooseOrder(user: ReturnType<typeof userEvent.setup>) {
@@ -103,7 +103,7 @@ describe("InvoiceFormDialog", () => {
   it("soumet les lignes retenues, écarts compris", async () => {
     const api = mockOrders().on("POST /invoices", {
       status: 201,
-      body: { data: { id: 9, reference: "FAC-2026-0009" } },
+      body: { data: { id: testId(9), reference: "FAC-2026-0009" } },
     });
 
     const user = userEvent.setup();
@@ -131,7 +131,7 @@ describe("InvoiceFormDialog", () => {
       expect(body.currency).toBe("XOF");
       expect(body.lines).toEqual([
         {
-          purchase_order_line_id: 40,
+          purchase_order_line_id: testId(40),
           description: "Ciment CEM II 42,5",
           quantity: 400,
           unit_price: 9.6,

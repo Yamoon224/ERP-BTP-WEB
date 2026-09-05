@@ -5,8 +5,8 @@ export interface DeliveryNoteListParams {
   sort?: string;
   direction?: "asc" | "desc";
   search?: string;
-  purchase_order_id?: number;
-  supplier_id?: number;
+  purchase_order_id?: string;
+  supplier_id?: string;
   status?: DeliveryNoteStatus;
   page?: number;
   per_page?: number;
@@ -14,17 +14,17 @@ export interface DeliveryNoteListParams {
 
 export interface DeliveryNoteInput {
   reference: string;
-  purchase_order_id: number;
+  purchase_order_id: string;
   received_at: string;
   notes?: string | null;
-  lines: Array<{ purchase_order_line_id: number; quantity_received: number }>;
+  lines: Array<{ purchase_order_line_id: string; quantity_received: number }>;
 }
 
 export function list(params: DeliveryNoteListParams = {}): Promise<Paginated<DeliveryNote>> {
   return apiFetch<Paginated<DeliveryNote>>("/delivery-notes", { query: { ...params } });
 }
 
-export async function find(id: number): Promise<DeliveryNote> {
+export async function find(id: string): Promise<DeliveryNote> {
   const response = await apiFetch<Single<DeliveryNote>>(`/delivery-notes/${id}`);
 
   return response.data;
@@ -45,7 +45,7 @@ export async function create(input: DeliveryNoteInput): Promise<DeliveryNote> {
  * factures doivent donc etre rafraichis apres cet appel.
  */
 export async function review(
-  id: number,
+  id: string,
   status: Extract<DeliveryNoteStatus, "accepted" | "rejected">,
 ): Promise<DeliveryNote> {
   const response = await apiFetch<Single<DeliveryNote>>(`/delivery-notes/${id}/review`, {

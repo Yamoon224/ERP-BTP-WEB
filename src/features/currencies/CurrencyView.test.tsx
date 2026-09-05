@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { CurrencyView } from "./CurrencyView";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { CurrencyReference, ExchangeRateQuote, User } from "@/types/api";
 
 const REFERENCE: CurrencyReference = {
@@ -21,7 +21,7 @@ const REFERENCE: CurrencyReference = {
 };
 
 const PEG: ExchangeRateQuote = {
-  id: 1,
+  id: testId(1),
   base_currency: "EUR",
   quote_currency: "XOF",
   rate: 655.957,
@@ -33,7 +33,7 @@ const PEG: ExchangeRateQuote = {
 };
 
 const MANUAL: ExchangeRateQuote = {
-  id: 2,
+  id: testId(2),
   base_currency: "EUR",
   quote_currency: "USD",
   rate: 1.085,
@@ -45,7 +45,7 @@ const MANUAL: ExchangeRateQuote = {
 };
 
 const ACCOUNTANT: User = {
-  id: 1,
+  id: testId(1),
   name: "Julien Bardot",
   email: "comptable@erp.test",
   roles: ["accountant"],
@@ -53,7 +53,7 @@ const ACCOUNTANT: User = {
 };
 
 const READER: User = {
-  id: 2,
+  id: testId(2),
   name: "Nadia Belkacem",
   email: "controleur@erp.test",
   roles: ["controller"],

@@ -4,19 +4,19 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { AuditList } from "./AuditList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { AuditLog, User } from "@/types/api";
 
 const ENTRY: AuditLog = {
-  id: 501,
+  id: testId(501),
   log_name: "default",
   description: "updated",
   event: "updated",
   event_label: "Modification",
   subject_type: "App\\Models\\Invoice",
   subject_label: "Facture",
-  subject_id: 9,
-  causer: { id: 4, name: "Julien Bardot" },
+  subject_id: testId(9),
+  causer: { id: testId(4), name: "Julien Bardot" },
   causer_label: "Julien Bardot",
   properties: {
     attributes: { currency: "XOF", status: "under_review" },
@@ -28,14 +28,14 @@ const ENTRY: AuditLog = {
 /** Une decision du moteur : personne ne l'a causee. */
 const SYSTEM_ENTRY: AuditLog = {
   ...ENTRY,
-  id: 502,
+  id: testId(502),
   causer: null,
   causer_label: "Systeme",
   properties: { attributes: { status: "approved" } },
 };
 
 const AUDITOR: User = {
-  id: 1,
+  id: testId(1),
   name: "Nadia Belkacem",
   email: "controleur@erp.test",
   roles: ["controller"],

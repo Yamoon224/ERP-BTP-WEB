@@ -12,8 +12,8 @@ export interface InvoiceListParams {
   sort?: string;
   direction?: "asc" | "desc";
   search?: string;
-  supplier_id?: number;
-  purchase_order_id?: number;
+  supplier_id?: string;
+  purchase_order_id?: string;
   status?: InvoiceStatus;
   currency?: Currency;
   page?: number;
@@ -21,7 +21,7 @@ export interface InvoiceListParams {
 }
 
 export interface InvoiceLineInput {
-  purchase_order_line_id: number | null;
+  purchase_order_line_id: string | null;
   description: string;
   quantity: number;
   unit_price: number;
@@ -34,7 +34,7 @@ export interface InvoiceLineInput {
  */
 export interface InvoiceInput {
   reference: string;
-  purchase_order_id: number;
+  purchase_order_id: string;
   currency?: string;
   invoice_date: string;
   due_date?: string | null;
@@ -45,7 +45,7 @@ export function list(params: InvoiceListParams = {}): Promise<Paginated<Invoice>
   return apiFetch<Paginated<Invoice>>("/invoices", { query: { ...params } });
 }
 
-export async function find(id: number): Promise<Invoice> {
+export async function find(id: string): Promise<Invoice> {
   const response = await apiFetch<Single<Invoice>>(`/invoices/${id}`);
 
   return response.data;
@@ -61,7 +61,7 @@ export async function submit(input: InvoiceInput): Promise<Invoice> {
   return response.data;
 }
 
-export async function cancel(id: number): Promise<Invoice> {
+export async function cancel(id: string): Promise<Invoice> {
   const response = await apiFetch<Single<Invoice>>(`/invoices/${id}/cancel`, { method: "POST" });
 
   return response.data;
@@ -74,7 +74,7 @@ export async function cancel(id: number): Promise<Invoice> {
  * la facon dont la facture a ete lue, pas ce que le fournisseur a ecrit
  * dessus. La reponse porte deja le nouveau verdict.
  */
-export async function changeCurrency(id: number, currency: Currency): Promise<Invoice> {
+export async function changeCurrency(id: string, currency: Currency): Promise<Invoice> {
   const response = await apiFetch<Single<Invoice>>(`/invoices/${id}/currency`, {
     method: "PATCH",
     body: { currency },
@@ -87,11 +87,11 @@ export async function changeCurrency(id: number, currency: Currency): Promise<In
  * Telecharge la facture au format PDF, verdict de rapprochement compris — une
  * facture imprimee sans son controle ne dit pas si elle est payable.
  */
-export function downloadPdf(id: number, reference: string): Promise<void> {
+export function downloadPdf(id: string, reference: string): Promise<void> {
   return apiDownload(`/invoices/${id}/pdf`, `facture-${reference}.pdf`);
 }
 
-export async function paymentAuthorization(id: number): Promise<PaymentAuthorization | null> {
+export async function paymentAuthorization(id: string): Promise<PaymentAuthorization | null> {
   const response = await apiFetch<{ data: PaymentAuthorization | null }>(
     `/invoices/${id}/payment-authorization`,
   );

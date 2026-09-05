@@ -4,15 +4,15 @@ import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
 import { ExceptionList } from "./ExceptionList";
 import { AuthProvider } from "@/features/auth/AuthContext";
-import { mockApi, paginated } from "@/test/api-mock";
+import { mockApi, paginated, testId } from "@/test/api-mock";
 import type { MatchException, User } from "@/types/api";
 
 function exception(overrides: Partial<MatchException> = {}): MatchException {
   return {
-    id: 10,
-    match_run_id: 5,
-    invoice_id: 3,
-    invoice_line_id: 7,
+    id: testId(10),
+    match_run_id: testId(5),
+    invoice_id: testId(3),
+    invoice_line_id: testId(7),
     type: "price_variance",
     type_label: "Écart de prix",
     severity: "medium",
@@ -25,10 +25,10 @@ function exception(overrides: Partial<MatchException> = {}): MatchException {
     reviewed_at: null,
     reviewed_by: null,
     invoice: {
-      id: 3,
+      id: testId(3),
       reference: "FAC-2026-0003",
       status: "under_review",
-      supplier: { id: 1, name: "Béton Express SAS" },
+      supplier: { id: testId(1), name: "Béton Express SAS" },
     },
     created_at: null,
     ...overrides,
@@ -36,7 +36,7 @@ function exception(overrides: Partial<MatchException> = {}): MatchException {
 }
 
 const CONTROLLER: User = {
-  id: 5,
+  id: testId(5),
   name: "Nadia Belkacem",
   email: "controleur@erp.test",
   roles: ["controller"],
@@ -44,7 +44,7 @@ const CONTROLLER: User = {
 };
 
 const ACCOUNTANT: User = {
-  id: 6,
+  id: testId(6),
   name: "Julien Bardot",
   email: "comptable@erp.test",
   roles: ["accountant"],
@@ -98,7 +98,7 @@ describe("ExceptionList", () => {
     const api = mockApi()
       .on("GET /me", { body: { data: CONTROLLER } })
       .on("GET /match-exceptions", { body: paginated([exception()]) })
-      .on("POST /match-exceptions/10/review", {
+      .on(`POST /match-exceptions/${testId(10)}/review`, {
         body: {
           data: {
             exception: exception({ review_status: "approved", review_status_label: "Accepté" }),
@@ -137,7 +137,7 @@ describe("ExceptionList", () => {
     mockApi()
       .on("GET /me", { body: { data: CONTROLLER } })
       .on("GET /match-exceptions", { body: paginated([exception()]) })
-      .on("POST /match-exceptions/10/review", {
+      .on(`POST /match-exceptions/${testId(10)}/review`, {
         status: 422,
         body: {
           message: "Données invalides.",
@@ -191,7 +191,7 @@ describe("ExceptionList", () => {
             review_status_label: "Refusé",
             review_note: "Prix non conforme au marché.",
             reviewed_at: "2026-09-02T09:15:00+00:00",
-            reviewed_by: { id: 5, name: "Nadia Belkacem" },
+            reviewed_by: { id: testId(5), name: "Nadia Belkacem" },
           }),
         ]),
       });

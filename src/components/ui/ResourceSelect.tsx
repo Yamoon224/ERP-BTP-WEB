@@ -5,11 +5,12 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { controlClasses } from "./Field";
-import { IconChevronDown, IconSearch } from "./icons";
+import { controlClasses, FieldShell } from "./Field";
+import { IconChevronDown } from "./icons";
 
 export interface ResourceOption {
-  value: number;
+  /** Identifiant de la ressource — un UUID, comme partout dans l'API. */
+  value: string;
   label: string;
   /** Deuxieme ligne : code, chantier, statut… ce qui departage deux homonymes. */
   hint?: string;
@@ -46,6 +47,11 @@ export interface ResourceSelectProps {
  *
  * L'element choisi reste affiche apres selection — pas seulement son
  * identifiant — pour qu'un formulaire relu avant envoi reste verifiable.
+ *
+ * L'habillage est celui de `Field` : meme coquille, meme libelle flottant,
+ * meme hauteur. Ce champ voisine presque toujours avec des `TextField` dans
+ * une grille a deux colonnes ; un libelle pose au-dessus, comme il l'etait
+ * avant, decalait sa ligne de saisie de celle de tous ses voisins.
  */
 export function ResourceSelect({
   label,
@@ -104,20 +110,13 @@ export function ResourceSelect({
   );
 
   return (
-    <div className={cn("flex w-full flex-col gap-1.5", className)} ref={containerRef}>
-      <label
-        htmlFor={inputId}
-        className={cn(
-          "text-xs font-medium tracking-wide",
-          hasError ? "text-rose-600 dark:text-rose-400" : "text-slate-600 dark:text-slate-300",
-        )}
+    <div className={cn("flex w-full flex-col gap-1", className)} ref={containerRef}>
+      <FieldShell
+        id={inputId}
+        label={label}
+        required={required}
+        adornment={<IconChevronDown className="pointer-events-none mr-1.5 h-4 w-4 text-slate-400" />}
       >
-        {label}
-        {required ? <span className="ml-0.5 text-rose-500">*</span> : null}
-      </label>
-
-      <div className="relative">
-        <IconSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
           id={inputId}
           type="text"
@@ -137,14 +136,8 @@ export function ResourceSelect({
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          className={cn(
-            controlClasses,
-            "px-9",
-            selected && query === "" &&
-              "placeholder:font-medium placeholder:text-slate-900 dark:placeholder:text-slate-100",
-          )}
+          className={cn(controlClasses, "pr-9", selected && "field-control--filled")}
         />
-        <IconChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
         {isOpen ? (
           <ul
@@ -192,7 +185,7 @@ export function ResourceSelect({
             ))}
           </ul>
         ) : null}
-      </div>
+      </FieldShell>
 
       {hint && !hasError ? (
         <p id={hintId} className="pl-0.5 text-xs text-slate-500 dark:text-slate-400">

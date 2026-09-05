@@ -47,7 +47,7 @@ export function SettlementDialog({
   const [settledAt, setSettledAt] = useState(today);
 
   const action = useCallback(
-    (input: { id: number; payment_reference: string; payment_method: PaymentMethod; settled_at: string }) =>
+    (input: { id: string; payment_reference: string; payment_method: PaymentMethod; settled_at: string }) =>
       paymentService.settle(input.id, {
         payment_reference: input.payment_reference,
         payment_method: input.payment_method,

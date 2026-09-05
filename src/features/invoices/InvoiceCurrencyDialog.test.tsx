@@ -2,12 +2,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { InvoiceCurrencyDialog } from "./InvoiceCurrencyDialog";
-import { mockApi } from "@/test/api-mock";
+import { mockApi, testId } from "@/test/api-mock";
 import { normaliseSpaces } from "@/test/intl";
 import type { Invoice } from "@/types/api";
 
 const INVOICE: Invoice = {
-  id: 9,
+  id: testId(9),
   reference: "FAC-2026-0009",
   status: "approved",
   status_label: "Approuvée",
@@ -15,7 +15,7 @@ const INVOICE: Invoice = {
   invoice_date: "2026-09-01",
   due_date: "2026-10-01",
   total_amount: 12000,
-  purchase_order_id: 4,
+  purchase_order_id: testId(4),
   created_at: null,
 };
 
@@ -55,7 +55,7 @@ describe("InvoiceCurrencyDialog", () => {
   });
 
   it("envoie la nouvelle devise puis referme", async () => {
-    const api = mockApi().on("PATCH /invoices/9/currency", {
+    const api = mockApi().on(`PATCH /invoices/${testId(9)}/currency`, {
       body: { data: { ...INVOICE, currency: "XOF" } },
     });
     const onChanged = vi.fn();
@@ -81,7 +81,7 @@ describe("InvoiceCurrencyDialog", () => {
   });
 
   it("relaie le refus d'une facture déjà réglée", async () => {
-    mockApi().on("PATCH /invoices/9/currency", {
+    mockApi().on(`PATCH /invoices/${testId(9)}/currency`, {
       status: 409,
       body: {
         message:
